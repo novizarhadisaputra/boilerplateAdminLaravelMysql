@@ -1,1 +1,1 @@
-# boilerplateAdminLaravelMysql
+# boilerplate Admin Laravel Mysql
