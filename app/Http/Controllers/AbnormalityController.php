@@ -101,7 +101,8 @@ class AbnormalityController extends Controller
             return \abort(404);
         }
 
-        return \view('pages.abnormality.edit', compact('abnormality'));
+        $status_abnormalities = StatusAbnormality::all();
+        return \view('pages.abnormality.edit', compact('abnormality', 'status_abnormalities'));
     }
 
     /**

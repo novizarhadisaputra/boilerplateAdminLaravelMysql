@@ -30,6 +30,13 @@
                             have an account.</p>
                         <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate="">
                             @csrf
+                            @if (Session::has('errors'))
+                            @foreach ($errors->all() as $err)
+                            <div class="alert alert-danger">
+                                {{$err}}
+                            </div>
+                            @endforeach
+                            @endif
                             <div class="form-group">
                                 <label for="email">Username</label>
                                 <input id="email" type="text" class="form-control" name="username" tabindex="1" required

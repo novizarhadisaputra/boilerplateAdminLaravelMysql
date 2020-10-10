@@ -74,7 +74,7 @@
                             <label for="pic_name">Status</label>
                             <select name="status_id" class="custom-select" id="">
                                 @foreach ($status_abnormalities as $item)
-                                <option value="{{ $item->id }}" {{ $item->id === $abnormality->status_id 'selected': '' }}>{{ $item->name }}</option>
+                                <option value="{{ $item->id }}" {{ $item->id === $abnormality->status_id ? 'selected': '' }}>{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>

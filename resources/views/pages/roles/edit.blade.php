@@ -12,7 +12,7 @@
                 @csrf
                 @method('PUT')
                 <div class="card-header">
-                    <h4>Add Role</h4>
+                    <h4>Edit Role</h4>
                     <div class="card-header-action">
                         <a href={{ route('roles.index') }} class="btn btn-info">Back to List Role</a>
                     </div>

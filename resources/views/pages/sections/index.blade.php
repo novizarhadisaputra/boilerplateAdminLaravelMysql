@@ -44,19 +44,15 @@
                                 <td> {{ $item->name }} </td>
                                 <td> {{ $item->department->name }} </td>
                                 <td>
-                                    <a href={{ route('sections.edit', $item->id) }} class="btn btn-warning" data-toggle="tooltip" title=""
-                                        data-original-title="Edit">
+                                    <a href={{ route('sections.edit', $item->id) }} class="btn btn-warning"
+                                        data-toggle="tooltip" title="" data-original-title="Edit">
                                         <i class="fas fa-pen-alt"></i>
                                     </a>
-                                    <a href="{{ route('sections.destroy', $item->id) }}" data-toggle="tooltip" title=""
-                                    data-original-title="Remove" class="btn btn-danger" onclick="event.preventDefault();
-                                            document.getElementById('delete-{{ $loop->iteration }}').submit();">
+                                    <a href="{{ route('sections.destroy', $item->id) }}" data-name="{{$item->name}}"
+                                        data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal"
+                                        data-original-title="Remove" class="btn btn-danger btn-delete">
                                         <i class="fas fa-trash"></i>
                                     </a>
-                                    <form id="delete-{{ $loop->iteration }}" action="{{ route('sections.destroy', $item->id) }}" method="POST" class="d-none">
-                                        @csrf
-                                        @method('DELETE');
-                                    </form>
                                 </td>
                             </tr>
                             @endforeach

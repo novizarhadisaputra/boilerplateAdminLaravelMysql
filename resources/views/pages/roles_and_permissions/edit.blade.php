@@ -12,7 +12,7 @@
                 @csrf
                 @method('PUT')
                 <div class="card-header">
-                    <h4>Add Roles And Permissions</h4>
+                    <h4>Edit Roles And Permissions</h4>
                     <div class="card-header-action">
                         <a href={{ route('roles-and-permissions.index') }} class="btn btn-info">Back to List Roles And Permissions</a>
                     </div>
@@ -38,7 +38,7 @@
                     </div>
                     <div class="form-group">
                         <label>Permissions</label>
-                        <select class="js-example-basic-multiple" name="permissions[]" multiple="multiple">
+                        <select class="form-control select2" name="permissions[]" multiple="">
                             @foreach ($permissions as $permission)
                             <option value="{{ $permission->id }}"
                                 @foreach ($role->permissions as $item)

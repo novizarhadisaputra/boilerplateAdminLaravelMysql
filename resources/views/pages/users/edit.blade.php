@@ -21,7 +21,7 @@
                 <div class="card profile-widget">
                     <div class="profile-widget-header">
                         <img style="height: 100px !important;" alt="image"
-                            src="{{ $user->profile_picture ?: asset('assets/img/avatar/avatar-1.png') }}"
+                            src="{{ $user->profile_picture ?? asset('assets/img/avatar/avatar-1.png') }}"
                             class="rounded-circle profile-widget-picture">
                         <div class="profile-widget-items">
                             <div class="profile-widget-item">
@@ -65,7 +65,7 @@
                             <div class="row">
                                 <div class="form-group col-md-6 col-12">
                                     <label>Role Name</label>
-                                    <select class="js-example-basic-multiple" name="roles[]" multiple="multiple">
+                                    <select class="form-control select2" name="roles[]" multiple="">
                                         @foreach ($roles as $role)
                                         @foreach ($user->roles as $item)
                                         <option value="{{ $role->id }}" {{ $item->id === $role->id ? 'selected': '' }}>

@@ -70,7 +70,7 @@ class CategoryController extends Controller
         if (!$category) {
             return \abort(404);
         }
-        return \view('pages.categorys.edit', compact('category'));
+        return \view('pages.categories.edit', compact('category'));
     }
 
     /**

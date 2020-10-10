@@ -12,7 +12,7 @@
                 @csrf
                 @method('PUT')
                 <div class="card-header">
-                    <h4>Add Permission</h4>
+                    <h4>Edit Permission</h4>
                     <div class="card-header-action">
                         <a href={{ route('permissions.index') }} class="btn btn-info">Back to List Permission</a>
                     </div>

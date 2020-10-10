@@ -65,7 +65,10 @@
                                         data-toggle="tooltip" title="" data-original-title="Detail">
                                         <i class="fas fa-info"></i>
                                     </a>
-                                    <a href="{{ route('roles-and-permissions.destroy', $item->id) }}" data-toggle="tooltip" title=""
+                                    <a href="{{ route('roles-and-permissions.destroy', $item->id) }}" data-name="{{$item->name}}" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-original-title="Remove" class="btn btn-danger btn-delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                    {{-- <a href="{{ route('roles-and-permissions.destroy', $item->id) }}" data-toggle="tooltip" title=""
                                         data-original-title="Remove" class="btn btn-danger" onclick="event.preventDefault();
                                             document.getElementById('delete-{{ $loop->iteration }}').submit();">
                                         <i class="fas fa-trash"></i>
@@ -74,7 +77,7 @@
                                         action="{{ route('roles-and-permissions.destroy', $item->id) }}" method="POST" class="d-none">
                                         @csrf
                                         @method('DELETE');
-                                    </form>
+                                    </form> --}}
                                 </td>
                             </tr>
                             @endforeach

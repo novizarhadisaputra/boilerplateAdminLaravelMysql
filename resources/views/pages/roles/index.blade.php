@@ -50,19 +50,20 @@
                                     @endforeach
                                 </td>
                                 <td>
-                                    <a href={{ route('roles.edit', $item->id) }} class="btn btn-warning" data-toggle="tooltip" title=""
-                                        data-original-title="Edit">
+                                    <a href={{ route('roles.edit', $item->id) }} class="btn btn-warning"
+                                        data-toggle="tooltip" title="" data-original-title="Edit">
                                         <i class="fas fa-pen-alt"></i>
                                     </a>
-                                    <a href="{{ route('roles.destroy', $item->id) }}" data-toggle="tooltip" title=""
-                                    data-original-title="Remove" class="btn btn-danger" onclick="event.preventDefault();
-                                            document.getElementById('delete-{{ $loop->iteration }}').submit();">
+                                    <a href="{{ route('roles.destroy', $item->id) }}" data-name="{{$item->name}}" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-target="#modalDelete-{{ $item->id }}"
+                                        data-original-title="Remove" class="btn btn-danger btn-delete">
                                         <i class="fas fa-trash"></i>
                                     </a>
-                                    <form id="delete-{{ $loop->iteration }}" action="{{ route('roles.destroy', $item->id) }}" method="POST" class="d-none">
-                                        @csrf
-                                        @method('DELETE');
-                                    </form>
+                                    {{-- <form id="delete-{{ $loop->iteration }}"
+                                    action="{{ route('roles.destroy', $item->id) }}" method="POST" class="d-none">
+                                    @csrf
+                                    @method('DELETE');
+                                    </form> --}}
+                                    <!-- Modal -->
                                 </td>
                             </tr>
                             @endforeach

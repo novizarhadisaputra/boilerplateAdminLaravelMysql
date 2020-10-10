@@ -34,7 +34,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'management'], function () {
         Route::resource('users', 'UserController');
-        Route::get('users/{id}/profile', 'UserController@profile')->name('users.profile');
+        // Route::get('users/{id}/profile', 'UserController@profile')->name('users.profile');
         Route::resource('roles-and-permissions', 'RolePermissionController');
     });
 
