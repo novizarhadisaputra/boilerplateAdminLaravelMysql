@@ -51,6 +51,7 @@ class UserController extends Controller
         $validated = $request->validated();
         try {
             $user = User::create($request->all());
+            $user->assignRole($request->roles);
             return redirect()->route('users.index')->with('success', 'Add Successfully');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
@@ -126,6 +127,7 @@ class UserController extends Controller
         }
 
         try {
+            $user->syncRoles($request->roles);
             $user->update($request->input());
             return redirect()->route('users.index')->with('success', 'Update Successfully');
         } catch (\Exception $e) {

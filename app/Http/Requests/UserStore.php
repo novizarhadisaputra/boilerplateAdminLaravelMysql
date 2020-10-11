@@ -25,13 +25,14 @@ class UserStore extends FormRequest
     {
         return [
             'name' => 'required|unique:users',
-            'role' => 'required',
+            'roles' => 'required',
             'npk' => 'required|unique:users',
             'department_id' => 'required',
             'section_id' => 'required',
             'username' => 'required|unique:users',
-            'password' => 'required',
-            'phone' => 'required|unique:users'
+            'password' => 'required|confirmed',
+            'phone' => 'required|unique:users',
+            'email' => 'email|required|unique:users'
         ];
     }
 

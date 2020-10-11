@@ -29,7 +29,7 @@
                             @foreach ($abnormality->files as $item)
                             <div class="form-group col-md-4">
                                 <div class="form-group">
-                                    <a href="{{ $item->original }}" target="_blank" class="btn btn-sm btn-primary">File
+                                    <a href="{{ asset('files/'.$item->path) }}" target="_blank" class="btn btn-sm btn-primary">File
                                         {{ strtoupper($item->ext) }} {{ $loop->iteration }}</a>
                                 </div>
                             </div>

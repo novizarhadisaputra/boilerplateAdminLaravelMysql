@@ -8,6 +8,7 @@
         </div>
         <ul class="sidebar-menu">
             <li class="menu-header">Menu</li>
+            @can('master data menu')
             <li class="nav-item dropdown {{ request()->is('master-data/*')  ?'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-database"></i> <span>Master Data</span></a>
                 <ul class="dropdown-menu">
@@ -20,17 +21,25 @@
                     <li class="{{ request()->is('master-data/categories') || request()->is('master-data/categories/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('categories.index') }}>Categories</a></li>
                 </ul>
             </li>
+            @endcan
 
+            @can('management menu')
             <li class="nav-item dropdown {{ request()->is('management/*') ? 'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-user-cog"></i> <span>Management</span></a>
+                @can('users menu')
                 <ul class="dropdown-menu">
                     <li class="{{ request()->is('management/users') || request()->is('management/users/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('users.index') }}>Users</a></li>
                 </ul>
+                @endcan
+                @can('roles and permissions', Model::class)
                 <ul class="dropdown-menu">
                     <li class="{{ request()->is('management/roles-and-permissions') || request()->is('management/roles-and-permissions/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('roles-and-permissions.index') }}>Roles and Permissions</a></li>
                 </ul>
+                @endcan
             </li>
+            @endcan
 
+            @can('request menu', Model::class)
             <li class="nav-item dropdown {{ request()->is('request/*') ?'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-inbox"></i> <span>Request</span></a>
                 <ul class="dropdown-menu">
@@ -38,6 +47,8 @@
                     <li class="{{ request()->is('request/abnormality') || request()->is('request/abnormality/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('abnormality.index') }}>Abnormality</a></li>
                 </ul>
             </li>
+            @endcan
+
 
 
         </ul>

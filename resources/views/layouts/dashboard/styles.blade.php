@@ -11,6 +11,27 @@
 <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
 <style>
+    .navbar-bg {
+        background-color: #e80607;
+    }
+    .main-sidebar .sidebar-menu li.active a {
+        color: #e80607;
+    }
+    .main-sidebar .sidebar-menu li ul.dropdown-menu li.active > a {
+        color: #e80607;
+    }
+    .main-sidebar .sidebar-menu li ul.dropdown-menu li a:hover {
+        color: #e80607;
+    }
+    body.sidebar-mini .main-sidebar .sidebar-menu > li.active > a {
+        background-color: #e80607;
+    }
+    body.sidebar-mini .main-sidebar .sidebar-menu > li ul.dropdown-menu li > a:focus, body.sidebar-mini .main-sidebar .sidebar-menu > li ul.dropdown-menu li.active > a, body.sidebar-mini .main-sidebar .sidebar-menu > li ul.dropdown-menu li.active > a:hover {
+        background-color: #e80607 !important;
+    }
+    .card .card-header h4 {
+        color: #34395e;
+    }
     .custom-file-upload {
         border: 1px solid #ccc;
         display: inline-block;

@@ -3,25 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Abnormality;
-use App\Department;
 use App\Events\ModelWasCreated;
+use App\Events\ModelWasDeleted;
+use App\Events\ModelWasUpdated;
+use App\Exports\AbnormalitiesExport;
 use App\Http\Requests\AbnormalityStore;
+use App\Http\Requests\AbnormalityUpdate;
 use App\StatusAbnormality;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AbnormalityController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
         $per_page = $request->per_page ?? 10;
-        $abnormalities = Abnormality::with('user')->paginate($per_page);
+
+        if (\checkRole('user')) {
+            $request->request->add(['user_id' => auth()->user()->id]);
+        }
+        $abnormalities = ($this->findAll($request))->paginate($per_page);
         return view('pages.abnormality.index', \compact('abnormalities'));
+    }
+
+    public function findOne($request)
+    {
+        $abnormality = Abnormality::select();
+        foreach ($request as $key => $value) {
+            if ($request->filled($key)) {
+                $abnormality->where([$key => $value]);
+            }
+        }
+        return $abnormality->first();
+    }
+
+    public function findAll($request)
+    {
+        $abnormalities = Abnormality::select();
+        foreach ($request as $key => $value) {
+            if ($request->filled($key)) {
+                $abnormalities->where([$key => $value]);
+            }
+        }
+        return $abnormalities;
     }
 
     /**
@@ -31,9 +60,7 @@ class AbnormalityController extends Controller
      */
     public function create()
     {
-        $roles = Role::all();
-        $departments = Department::all();
-        return view('pages.abnormality.create', \compact('roles', 'departments'));
+        return view('pages.abnormality.create');
 
     }
 
@@ -55,7 +82,7 @@ class AbnormalityController extends Controller
             $abnormality = Abnormality::create($request->all());
 
             //Memanggil Event ModelWasCreated
-            event(new ModelWasCreated($abnormality, 'The model abnormality just added a new line'));
+            event(new ModelWasCreated($abnormality, 'The request abnormality just added'));
 
             if ($request->hasfile('files')) {
                 $validator = Validator::make($request->all(), [
@@ -63,9 +90,10 @@ class AbnormalityController extends Controller
                     'files.*' => 'mimes:png,jpeg,jpg,pdf']);
 
                 foreach ($request->file('files') as $file) {
-                    $name = Str::random(40) . time() . '.' . $file->extension();
-                    Storage::disk('local')->putFileAs('files', new File($file), $name);
-                    $abnormality->files()->create(['name' => $name, 'ext' => $file->extension(), 'original' => public_path('files') . '/' . $name]);
+                    $name = Str::random(40) . '.' . $file->extension();
+                    $path = date('Y/m/d/') . $name;
+                    Storage::disk('local')->putFileAs('files', new File($file), $path);
+                    $abnormality->files()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('files') . '/' . $path]);
                 }
             }
 
@@ -86,6 +114,11 @@ class AbnormalityController extends Controller
         if (!$abnormality) {
             return \abort(404);
         }
+
+        if ($abnormality->user_id !== auth()->user()->id) {
+            return abort(403);
+        }
+
         return view('pages.abnormality.detail', compact('abnormality'));
     }
 
@@ -97,6 +130,8 @@ class AbnormalityController extends Controller
      */
     public function edit(Abnormality $abnormality)
     {
+        checkPermission('edit abnormality');
+
         if (!$abnormality) {
             return \abort(404);
         }
@@ -112,9 +147,39 @@ class AbnormalityController extends Controller
      * @param  \App\Abnormality  $abnormality
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Abnormality $abnormality)
+    public function update(AbnormalityUpdate $request, Abnormality $abnormality)
     {
-        //
+        checkPermission('edit abnormality');
+
+        if (!$abnormality) {
+            return \abort(404);
+        }
+
+        if ($request->hasfile('files')) {
+            foreach ($abnormality->files as $tmp) {
+                Storage::delete('files/' . $tmp->path);
+                $abnormality->files()->where(['id' => $tmp->id])->delete();
+            }
+            $validator = Validator::make($request->all(), [
+                'files' => 'required',
+                'files.*' => 'mimes:png,jpeg,jpg,pdf']);
+
+            foreach ($request->file('files') as $file) {
+                $name = Str::random(40) . '.' . $file->extension();
+                $path = date('Y/m/d/') . $name;
+                Storage::disk('local')->putFileAs('files', new File($file), $path);
+                $abnormality->files()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('files') . '/' . $path]);
+            }
+        }
+
+        try {
+            //Memanggil Event ModelWasUpdated
+            event(new ModelWasUpdated($abnormality, 'The request abnormality just updated'));
+            $abnormality->update($request->input());
+            return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
     }
 
     /**
@@ -125,6 +190,21 @@ class AbnormalityController extends Controller
      */
     public function destroy(Abnormality $abnormality)
     {
-        //
+        checkPermission('delete abnormality');
+
+        if (!$abnormality) {
+            return \abort(404);
+        }
+        //Memanggil Event ModelWasDeleted
+        event(new ModelWasDeleted($abnormality, 'The request abnormality just deleted'));
+
+        $abnormality->delete();
+        return redirect()->route('abnormality.index')->with('success', 'Delete Successfully');
+    }
+
+    public function export(Request $request)
+    {
+        $abnormalities = ($this->findAll($request))->get();
+        return Excel::download(new AbnormalitiesExport($abnormalities), 'abnomalities.xlsx');
     }
 }

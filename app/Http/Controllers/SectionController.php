@@ -22,6 +22,17 @@ class SectionController extends Controller
         return view('pages.sections.index', \compact('sections'));
     }
 
+    public function findAll(Request $request)
+    {
+        $sections = Section::select();
+        foreach ($request as $key => $value) {
+            if ($request->filled($key)) {
+                $sections->where([$key => $value]);
+            }
+        }
+        return $sections->get();
+    }
+
     /**
      * Show the form for creating a new resource.
      *

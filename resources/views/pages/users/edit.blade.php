@@ -134,7 +134,7 @@
                                     <label>Department</label>
                                     <select name="department_id" id="department_id" class="custom-select">
                                         @foreach ($departments as $item)
-                                        <option {{$item->id === $user->department_id ? 'selected' : ''}}>{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}" {{$item->id === $user->department_id ? 'selected' : ''}}>{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -142,7 +142,7 @@
                                     <label>Section</label>
                                     <select name="section_id" id="section_id" class="custom-select">
                                         @foreach ($sections as $item)
-                                        <option {{$item->id === $user->section_id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}" {{$item->id === $user->section_id ? 'selected' : '' }}>{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

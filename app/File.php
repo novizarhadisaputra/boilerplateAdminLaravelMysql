@@ -9,7 +9,7 @@ class File extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'ext', 'original'];
+    protected $fillable = ['name', 'ext', 'original' ,'path'];
 
     public function fileable()
     {

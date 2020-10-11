@@ -31,6 +31,7 @@ class UserUpdate extends FormRequest
             'section_id' => 'required',
             'username' => 'required',
             'phone' => 'required',
+            'email' => 'email|required'
         ];
     }
 
@@ -38,7 +39,7 @@ class UserUpdate extends FormRequest
     {
         return [
             'name.required' => 'Field name is required',
-            'roles.required' => 'Field roles is required',
+            'role.required' => 'Field role is required',
             'npk.required' => 'Field NPK is required',
             'phone.required' => 'Field phone is required',
             'department_id.required' => 'Field department is required',

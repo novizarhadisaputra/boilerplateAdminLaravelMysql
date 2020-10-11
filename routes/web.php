@@ -22,7 +22,7 @@ Auth::routes(['register' => false, 'password.request' => false, 'password.reset'
 // admin site
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::group(['prefix' => 'master-data'], function () {
+    Route::group(['prefix' => 'master-data', 'middleware' => ['role:super admin']], function () {
         Route::resource('roles', 'RoleController');
         Route::resource('permissions', 'PermissionController');
         Route::resource('departments', 'DepartmentController');
@@ -32,7 +32,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('status-abnormality', 'StatusAbnormalityController');
     });
 
-    Route::group(['prefix' => 'management'], function () {
+    Route::group(['prefix' => 'management',  'middleware' => ['role:super admin']], function () {
         Route::resource('users', 'UserController');
         // Route::get('users/{id}/profile', 'UserController@profile')->name('users.profile');
         Route::resource('roles-and-permissions', 'RolePermissionController');
@@ -41,10 +41,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'request'], function () {
         Route::resource('work-order', 'WorkOrderController');
         Route::resource('abnormality', 'AbnormalityController');
+        Route::get('abnormality/exports/excel', 'AbnormalityController@export')->name('abnormality.exports.excel')->middleware('role:super admin');
+        Route::get('work-order/exports/excel', 'WorkOrderController@export')->name('work-order.exports.excel')->middleware('role:super admin');
     });
 });
 
-Route::get('/clear-cache', function() {
+Route::get('sections', 'SectionController@findAll')->name('sections.find');
+
+Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');
     return "Cache is cleared";
 });

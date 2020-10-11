@@ -5,7 +5,9 @@ namespace App\Providers;
 use App\Events\ModelWasCreated;
 use App\Events\ModelWasDeleted;
 use App\Events\ModelWasUpdated;
-use App\Listeners\SaveLog;
+use App\Listeners\LogCreated;
+use App\Listeners\LogDeleted;
+use App\Listeners\LogUpdated;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -23,13 +25,13 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         ModelWasCreated::class => [
-            SaveLog::class
+            LogCreated::class,
         ],
         ModelWasUpdated::class => [
-            SaveLog::class
+            LogUpdated::class,
         ],
         ModelWasDeleted::class => [
-            SaveLog::class
+            LogDeleted::class,
         ],
     ];
 

@@ -19,9 +19,10 @@ class ModelWasUpdated
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($data, $message)
     {
-        //
+        $this->data = $data;
+        $this->message = $message;
     }
 
     /**

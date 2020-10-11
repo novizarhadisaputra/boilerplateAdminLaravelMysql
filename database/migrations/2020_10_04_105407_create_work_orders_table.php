@@ -21,6 +21,7 @@ class CreateWorkOrdersTable extends Migration
             $table->string('location');
             $table->string('pic_name');
             $table->unsignedBigInteger('status_id');
+            $table->unsignedBigInteger('category_id');
             $table->timestamps();
             $table->softDeletes();
         });

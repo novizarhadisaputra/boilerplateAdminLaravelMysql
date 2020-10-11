@@ -19,6 +19,13 @@
 <script src="{{ asset('assets/js/custom.js') }}"></script>
 
 <script>
+    $(document).ready(function () {
+        if ($('select[name="department_id"]').val()) {
+            let department_id = $('select[name="department_id"]').val();
+            showSections(department_id);
+        }
+    });
+
     $('#addFile').click(function (e) {
         e.preventDefault();
         let html = `
@@ -30,6 +37,11 @@
         </div>
     </div>`;
         $('#files').html(html);
+    });
+
+    $('select[name="department_id"]').change(function (e) {
+        let section_id = $(this).val();
+        showSections(section_id);
     });
 
     $('.btn-delete').click(function (e) {
@@ -62,6 +74,22 @@
         let fileName = $(this).val().split("\\").pop();
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
+
+    async function showSections(department_id = null) {
+        let query = {}
+        if (department_id) {
+            query.id = department_id;
+        }
+        $.get(`{{route('sections.find')}}`, query, function (response) {
+            if (response) {
+                let data = response.filter(val => val.department_id == department_id)
+                let options = data.map(val => {
+                    return `<option value='${val.id}'>${val.name}</option>`;
+                });
+                $('select[name="section_id"]').html(options.join(''));
+            }
+        });
+    }
 
 </script>
 
