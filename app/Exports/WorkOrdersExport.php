@@ -2,16 +2,19 @@
 
 namespace App\Exports;
 
-use App\WorkOrder;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
 
-class WorkOrdersExport implements FromCollection
+class WorkOrdersExport implements FromView
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function collection()
+
+    public function __construct($data)
     {
-        return WorkOrder::all();
+        $this->data = $data;
+    }
+
+    public function view(): View
+    {
+        return view('exports.excel.work_orders', ['workOrders' => $this->data]);
     }
 }

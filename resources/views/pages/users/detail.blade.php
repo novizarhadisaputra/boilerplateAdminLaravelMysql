@@ -65,7 +65,7 @@
                             <div class="row">
                                 <div class="form-group col-md-6 col-12">
                                     <label>Role Name</label>
-                                    <select class="js-example-basic-multiple" name="roles[]" multiple="multiple">
+                                    <select class="form-control select2" name="roles[]" multiple="multiple">
                                         @foreach ($roles as $role)
                                         @foreach ($user->roles as $item)
                                         <option value="{{ $role->id }}" {{ $item->id === $role->id ? 'selected': '' }}>

@@ -44,7 +44,7 @@
         showSections(section_id);
     });
 
-    $('.btn-delete').click(function (e) {
+    $('.btn-modal').click(function (e) {
         console.log('masuk')
         e.preventDefault();
         let html = `
@@ -56,13 +56,13 @@
     </div>
     <form class="needs-validation" action="${$(this).attr('href')}" method="POST">
         <input type="hidden" name="_token" value="${$(this).data('csrf')}">
-        <input type="hidden" name="_method" value="DELETE">
+        <input type="hidden" name="_method" value="${$(this).data('method')}">
     <div class="modal-body">
-        Are you sure delete ${$(this).data('name')} ?
+        ${$(this).data('wording')} ?
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Delete</button>
+        <button type="submit" class="btn btn-primary">${$(this).data('button-label')}</button>
     </div>
     </form>
     `;

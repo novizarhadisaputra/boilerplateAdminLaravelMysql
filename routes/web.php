@@ -21,7 +21,7 @@ Auth::routes(['register' => false, 'password.request' => false, 'password.reset'
 
 // admin site
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/dashboard', 'HomeController@index')->name('dashboard');
     Route::group(['prefix' => 'master-data', 'middleware' => ['role:super admin']], function () {
         Route::resource('roles', 'RoleController');
         Route::resource('permissions', 'PermissionController');
@@ -43,6 +43,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('abnormality', 'AbnormalityController');
         Route::get('abnormality/exports/excel', 'AbnormalityController@export')->name('abnormality.exports.excel')->middleware('role:super admin');
         Route::get('work-order/exports/excel', 'WorkOrderController@export')->name('work-order.exports.excel')->middleware('role:super admin');
+        Route::post('abnormality/status/open', 'WorkOrderController@open')->name('abnormality.status.open');
+        Route::post('work-order/status/open', 'WorkOrderController@open')->name('work-order.status.open');
+
     });
 });
 

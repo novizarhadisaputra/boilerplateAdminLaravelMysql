@@ -6,10 +6,13 @@ use App\Category;
 use App\Events\ModelWasCreated;
 use App\Events\ModelWasDeleted;
 use App\Events\ModelWasUpdated;
+use App\Exports\WorkOrdersExport;
 use App\Http\Requests\WorkOrderStore;
+use App\Http\Requests\WorkOrderUpdate;
 use App\StatusWorkOrder;
 use App\WorkOrder;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class WorkOrderController extends Controller
 {
@@ -17,9 +20,10 @@ class WorkOrderController extends Controller
     {
         $per_page = $request->per_page ?? 10;
 
-        if (\checkRole('user')) {
+        if (\auth()->user()->hasRole('user')) {
             $request->request->add(['user_id' => auth()->user()->id]);
         }
+
         $workOrders = ($this->findAll($request))->paginate($per_page);
         return view('pages.work_orders.index', \compact('workOrders'));
     }
@@ -109,12 +113,13 @@ class WorkOrderController extends Controller
             return \abort(404);
         }
 
-        if ($workOrder->user_id !== auth()->user()->id) {
-            return abort(403);
+        if (auth()->user()->hasRole('user')) {
+            if ($workOrder->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
         }
-
-
-        return view('pages.work_orders.detail', compact('workOrder'));
+        $statusWorkOrders = StatusWorkOrder::all();
+        return view('pages.work_orders.detail', compact('workOrder', 'statusWorkOrders'));
     }
 
     /**
@@ -125,14 +130,17 @@ class WorkOrderController extends Controller
      */
     public function edit(WorkOrder $workOrder)
     {
-        checkPermission('edit workOrder');
+        if (!auth()->user()->can('edit work orders')) {
+            return \abort(403);
+        }
 
         if (!$workOrder) {
             return \abort(404);
         }
 
-        $status_abnormalities = StatusWorkOrder::all();
-        return \view('pages.work_orders.edit', compact('workOrder', 'status_abnormalities'));
+        $categories = Category::all();
+        $statusWorkOrders = StatusWorkOrder::all();
+        return \view('pages.work_orders.edit', compact('workOrder', 'statusWorkOrders', 'categories'));
     }
 
     /**
@@ -144,6 +152,10 @@ class WorkOrderController extends Controller
      */
     public function update(WorkOrderUpdate $request, WorkOrder $workOrder)
     {
+        if (!auth()->user()->can('edit work orders')) {
+            return \abort(403);
+        }
+
         if (!$workOrder) {
             return \abort(404);
         }
@@ -183,21 +195,52 @@ class WorkOrderController extends Controller
      */
     public function destroy(WorkOrder $workOrder)
     {
-        checkPermission('delete workOrder');
+        if (!auth()->user()->can('delete work orders')) {
+            return \abort(403);
+        }
 
         if (!$workOrder) {
             return \abort(404);
         }
-        //Memanggil Event ModelWasDeleted
-        event(new ModelWasDeleted($workOrder, 'The request work order just deleted'));
 
-        $workOrder->delete();
-        return redirect()->route('work-order.index')->with('success', 'Delete Successfully');
+        try {
+            //Memanggil Event ModelWasDeleted
+            event(new ModelWasDeleted($workOrder, 'The request work order just deleted'));
+
+            $workOrder->delete();
+            return redirect()->route('work-order.index')->with('success', 'Delete Successfully');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
     }
 
     public function export(Request $request)
     {
         $workOrders = ($this->findAll($request))->get();
-        return Excel::download(new AbnormalitiesExport($workOrders), 'work_orders.xlsx');
+        return Excel::download(new WorkOrdersExport($workOrders), 'work_orders.xlsx');
+    }
+
+    public function open(Request $request, WorkOrder $workOrder)
+    {
+        $request->request->add(['id' => $workOrder]);
+        $workOrder = $this->findOne($request);
+
+        $status = StatusWorkOrder::where(['name' => 'Open'])->orWhere(['name' => 'open'])->first();
+        if (auth()->user()->hasRole('user')) {
+            if ($workOrder->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
+        }
+
+        if ($workOrder->status->name === 'Draft' || $workOrder->status->name === 'draft') {
+            $workOrder->status_id = $status->id;
+            $workOrder->save();
+
+            //Memanggil Event ModelWasUpdated
+            event(new ModelWasUpdated($workOrder, 'The request work order change status to open'));
+        }
+
+        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
     }
 }

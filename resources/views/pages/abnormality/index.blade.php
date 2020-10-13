@@ -62,8 +62,11 @@
                                         <i class="fas fa-pen-alt"></i>
                                     </a>
                                     @endcan
+                                    <a href="{{ route('abnormality.status.open', $item->id) }}" data-button-label="Update" data-method="POST" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-wording="Are you sure change status to open {{ $item->title }}" data-title="Open Abnormality" class="btn btn-success btn-modal">
+                                        <i class="fas fa-share-square"></i>
+                                    </a>
                                     @can('delete abnormality')
-                                    <a href="{{ route('abnormality.destroy', $item->id) }}" data-name="{{$item->title}}" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-original-title="Remove" class="btn btn-danger btn-delete">
+                                    <a href="{{ route('abnormality.destroy', $item->id) }}" data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-wording="Are you sure delete {{ $item->title }}" data-title="Remove Abnormality" class="btn btn-danger btn-modal">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                     @endcan

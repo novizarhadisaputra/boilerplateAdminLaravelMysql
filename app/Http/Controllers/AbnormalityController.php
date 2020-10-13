@@ -24,9 +24,10 @@ class AbnormalityController extends Controller
     {
         $per_page = $request->per_page ?? 10;
 
-        if (\checkRole('user')) {
+        if (\auth()->user()->hasRole('user')) {
             $request->request->add(['user_id' => auth()->user()->id]);
         }
+
         $abnormalities = ($this->findAll($request))->paginate($per_page);
         return view('pages.abnormality.index', \compact('abnormalities'));
     }
@@ -130,7 +131,9 @@ class AbnormalityController extends Controller
      */
     public function edit(Abnormality $abnormality)
     {
-        checkPermission('edit abnormality');
+        if (!auth()->user()->can('edit abnormality')) {
+            return \abort(403);
+        }
 
         if (!$abnormality) {
             return \abort(404);
@@ -149,7 +152,9 @@ class AbnormalityController extends Controller
      */
     public function update(AbnormalityUpdate $request, Abnormality $abnormality)
     {
-        checkPermission('edit abnormality');
+        if (!auth()->user()->can('edit abnormality')) {
+            return \abort(403);
+        }
 
         if (!$abnormality) {
             return \abort(404);
@@ -190,21 +195,52 @@ class AbnormalityController extends Controller
      */
     public function destroy(Abnormality $abnormality)
     {
-        checkPermission('delete abnormality');
+        if (!auth()->user()->can('delete abnormality')) {
+            return \abort(403);
+        }
 
         if (!$abnormality) {
             return \abort(404);
         }
-        //Memanggil Event ModelWasDeleted
-        event(new ModelWasDeleted($abnormality, 'The request abnormality just deleted'));
 
-        $abnormality->delete();
-        return redirect()->route('abnormality.index')->with('success', 'Delete Successfully');
+        try {
+            //Memanggil Event ModelWasDeleted
+            event(new ModelWasDeleted($abnormality, 'The request abnormality just deleted'));
+
+            $abnormality->delete();
+            return redirect()->route('abnormality.index')->with('success', 'Delete Successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
     }
 
     public function export(Request $request)
     {
-        $abnormalities = ($this->findAll($request))->get();
-        return Excel::download(new AbnormalitiesExport($abnormalities), 'abnomalities.xlsx');
+        try {
+            $abnormalities = ($this->findAll($request))->get();
+            return Excel::download(new AbnormalitiesExport($abnormalities), 'abnomalities.xlsx');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
+    }
+
+    public function open(Request $request, Abnormality $abnormality)
+    {
+        $request->request->add(['id' => $abnormality]);
+        $abnormality = $this->findOne($request);
+        $status = StatusAbnormality::where(['name' => 'Open'])->orWhere(['name' => 'open'])->first();
+        if ($abnormality->user_id !== auth()->user()->id) {
+            return abort(403);
+        }
+
+        if ($abnormality->status->name === 'Draft' || $abnormality->status->name === 'draft') {
+            $abnormality->status_id = $status->id;
+            $abnormality->save();
+
+            //Memanggil Event ModelWasUpdated
+            event(new ModelWasUpdated($abnormality, 'The request abnormality change status to open'));
+
+        }
+        return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
     }
 }

@@ -1,7 +1,7 @@
 <table>
     <tbody>
         <tr>
-            <td colspan="5" style="text-align: center">Request Abnormality</td>
+            <td colspan="6" style="text-align: center">Request Abnormality</td>
         </tr>
         <tr>
             <td></td>

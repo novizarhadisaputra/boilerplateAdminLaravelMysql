@@ -56,14 +56,17 @@
                                         data-original-title="Detail">
                                         <i class="fas fa-info"></i>
                                     </a>
-                                    @can('edit abnormality')
+                                    @can('edit work orders')
                                     <a href={{ route('work-order.edit', $item->id) }} class="btn btn-warning" data-toggle="tooltip" title=""
                                         data-original-title="Edit">
                                         <i class="fas fa-pen-alt"></i>
                                     </a>
                                     @endcan
-                                    @can('delete abnormality')
-                                    <a href="{{ route('work-order.destroy', $item->id) }}" data-name="{{$item->title}}" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-original-title="Remove" class="btn btn-danger btn-delete">
+                                    <a href="{{ route('work-order.status.open', $item->id) }}" data-button-label="Update" data-method="POST" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-wording="Are you sure change status to open {{ $item->title }}" data-title="Open Work Order" class="btn btn-success btn-modal">
+                                        <i class="fas fa-share-square"></i>
+                                    </a>
+                                    @can('delete work orders')
+                                    <a href="{{ route('work-order.destroy', $item->id) }}" data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-wording="Are you sure delete {{ $item->title }}" data-title="Remove Work Order" class="btn btn-danger btn-modal">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                     @endcan

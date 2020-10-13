@@ -1,13 +1,20 @@
 <div class="main-sidebar">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href={{ route('home') }}>Dashboard Page</a>
+            <a href={{ route('dashboard') }}>Dashboard Page</a>
         </div>
         <div class="sidebar-brand sidebar-brand-sm">
-            <a href={{ route('home') }}>DP</a>
+            <a href={{ route('dashboard') }}>DP</a>
         </div>
         <ul class="sidebar-menu">
             <li class="menu-header">Menu</li>
+
+            @can('master data menu')
+            <li class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}">
+                <a href="#" class="nav-link" data-toggle="dropdown"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+            </li>
+            @endcan
+
             @can('master data menu')
             <li class="nav-item dropdown {{ request()->is('master-data/*')  ?'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-database"></i> <span>Master Data</span></a>
