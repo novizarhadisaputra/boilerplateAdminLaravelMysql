@@ -11,7 +11,7 @@
 
             @can('master data menu')
             <li class="nav-item {{ request()->is('dashboard') ? 'active' : '' }}">
-                <a href="#" class="nav-link" data-toggle="dropdown"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+                <a href="{{ route('dashboard') }}" class="nav-link"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
             </li>
             @endcan
 

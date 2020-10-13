@@ -87,6 +87,10 @@ class WorkOrderController extends Controller
                     'files' => 'required',
                     'files.*' => 'mimes:png,jpeg,jpg,pdf']);
 
+                if (count($request->file('files')) > 3) {
+                    redirect()->back()->withErrors(['erros' => ['File not allow more than 3 files!']]);
+                }
+
                 foreach ($request->file('files') as $file) {
                     $name = Str::random(40) . '.' . $file->extension();
                     $path = date('Y/m/d/') . $name;
@@ -168,6 +172,10 @@ class WorkOrderController extends Controller
             $validator = Validator::make($request->all(), [
                 'files' => 'required',
                 'files.*' => 'mimes:png,jpeg,jpg,pdf']);
+
+            if (count($request->file('files')) > 3) {
+                redirect()->back()->withErrors(['erros' => ['File not allow more than 3 files!']]);
+            }
 
             foreach ($request->file('files') as $file) {
                 $name = Str::random(40) . '.' . $file->extension();

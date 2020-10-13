@@ -12,7 +12,12 @@
 <script src="{{ asset('assets/js/stisla.js') }}"></script>
 
 <!-- JS Libraies -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="sweetalert2.all.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+<!-- Optional: include a polyfill for ES6 Promises for IE11 -->
+<script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
 
 <!-- Template JS File -->
 <script src="{{ asset('assets/js/scripts.js') }}"></script>
@@ -28,14 +33,22 @@
 
     $('#addFile').click(function (e) {
         e.preventDefault();
+        if ($('.custom-file-input').length === 3) {
+            return Swal.fire({
+                title: 'Warning!',
+                text: 'File not allow more than 3 files!',
+                icon: 'error',
+                confirmButtonText: 'Close'
+            })
+        }
         let html = `
-    ${$('#files').html()}
-    <div class="form-group col-md-4">
-        <div class="custom-file mb-3">
-            <input type="file" class="custom-file-input" id="customFile" name="files[]">
-            <label class="custom-file-label" for="customFile">Choose file</label>
-        </div>
-    </div>`;
+        ${$('#files').html()}
+        <div class="form-group col-md-4">
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input" id="customFile" name="files[]">
+                <label class="custom-file-label" for="customFile">Choose file</label>
+            </div>
+        </div>`;
         $('#files').html(html);
     });
 

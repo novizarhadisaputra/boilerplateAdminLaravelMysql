@@ -90,6 +90,10 @@ class AbnormalityController extends Controller
                     'files' => 'required',
                     'files.*' => 'mimes:png,jpeg,jpg,pdf']);
 
+                if (count($request->file('files')) > 3) {
+                    redirect()->back()->withErrors(['erros' => ['File not allow more than 3 files!']]);
+                }
+
                 foreach ($request->file('files') as $file) {
                     $name = Str::random(40) . '.' . $file->extension();
                     $path = date('Y/m/d/') . $name;
@@ -161,6 +165,7 @@ class AbnormalityController extends Controller
         }
 
         if ($request->hasfile('files')) {
+
             foreach ($abnormality->files as $tmp) {
                 Storage::delete('files/' . $tmp->path);
                 $abnormality->files()->where(['id' => $tmp->id])->delete();
@@ -168,6 +173,10 @@ class AbnormalityController extends Controller
             $validator = Validator::make($request->all(), [
                 'files' => 'required',
                 'files.*' => 'mimes:png,jpeg,jpg,pdf']);
+
+            if (count($request->file('files')) > 3) {
+                redirect()->back()->withErrors(['erros' => ['File not allow more than 3 files!']]);
+            }
 
             foreach ($request->file('files') as $file) {
                 $name = Str::random(40) . '.' . $file->extension();
