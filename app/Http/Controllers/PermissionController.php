@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PermissionStore;
+use App\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Permission;
@@ -16,9 +17,12 @@ class PermissionController extends Controller
      */
     public function index()
     {
+        $notifications = Notification::all();
+
         $per_page = $request->per_page ?? 10;
         $permissions = Permission::paginate($per_page);
-        return view('pages.permissions.index', \compact('permissions'));
+
+        return view('pages.permissions.index', \compact('permissions', 'notifications'));
     }
 
     /**
@@ -28,7 +32,9 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        return view('pages.permissions.create');
+        $notifications = Notification::all();
+
+        return view('pages.permissions.create', 'notifications');
     }
 
     /**
@@ -66,7 +72,10 @@ class PermissionController extends Controller
         if (!$permission) {
             return \abort(404);
         }
-        return \view('pages.permissions.edit', compact('permission'));
+
+        $notifications = Notification::all();
+
+        return \view('pages.permissions.edit', compact('permission', 'notifications'));
     }
 
     /**

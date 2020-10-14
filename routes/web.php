@@ -43,8 +43,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('abnormality', 'AbnormalityController');
         Route::get('abnormality/exports/excel', 'AbnormalityController@export')->name('abnormality.exports.excel')->middleware('role:super admin');
         Route::get('work-order/exports/excel', 'WorkOrderController@export')->name('work-order.exports.excel')->middleware('role:super admin');
-        Route::post('abnormality/status/open', 'WorkOrderController@open')->name('abnormality.status.open');
-        Route::post('work-order/status/open', 'WorkOrderController@open')->name('work-order.status.open');
+        Route::post('abnormality/status/open/{id}', 'AbnormalityController@open')->name('abnormality.status.open');
+        Route::post('work-order/status/open/{id}', 'WorkOrderController@open')->name('work-order.status.open');
 
     });
 });

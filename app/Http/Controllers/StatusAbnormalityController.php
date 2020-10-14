@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StatusAbnormalityStore;
+use App\Notification;
 use App\StatusAbnormality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -16,9 +17,12 @@ class StatusAbnormalityController extends Controller
      */
     public function index()
     {
+        $notifications = Notification::all();
+
         $per_page = $request->per_page ?? 10;
         $status_abnormality = StatusAbnormality::paginate($per_page);
-        return view('pages.status_abnormality.index', \compact('status_abnormality'));
+
+        return view('pages.status_abnormality.index', \compact('status_abnormality', 'notifications'));
     }
 
     /**
@@ -28,7 +32,9 @@ class StatusAbnormalityController extends Controller
      */
     public function create()
     {
-        return view('pages.status_abnormality.create');
+        $notifications = Notification::all();
+
+        return view('pages.status_abnormality.create', \compact('notifications'));
     }
 
     /**
@@ -71,7 +77,10 @@ class StatusAbnormalityController extends Controller
         if (!$status_abnormality) {
             return \abort(404);
         }
-        return \view('pages.status_abnormality.edit', compact('status_abnormality'));
+
+        $notifications = Notification::all();
+
+        return \view('pages.status_abnormality.edit', compact('status_abnormality', 'notifications'));
     }
 
     /**

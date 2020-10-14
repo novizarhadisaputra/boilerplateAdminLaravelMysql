@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Abnormality;
 use App\Http\Requests\DashboardRequest;
 use App\Log;
+use App\Notification;
+use App\StatusAbnormality;
+use App\StatusWorkOrder;
 use App\User;
 use App\WorkOrder;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,12 +32,21 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+        $notifications = Notification::all();
+
         $total_users = User::whereHas('roles', function(Builder $query) {
-            $query->where('name', 'user');
+            $query->whereNotIn('name', ['super admin', 'admin']);
         })->count();
+
         $total_abnormalities = Abnormality::count();
         $total_work_orders = WorkOrder::count();
-        $logs = Log::all();
-        return view('home', compact('total_users', 'total_abnormalities', 'total_work_orders', 'logs'));
+
+        $per_page = $request->per_page ?? 5;
+        $logs = Log::orderBy('created_at', 'desc')->paginate($per_page);
+
+        $statusAbnormalities = StatusAbnormality::whereIn('name', ['Outstanding', 'Closed'])->get();
+        $statusWorkOrders = StatusWorkOrder::whereIn('name', ['Outstanding', 'Closed'])->get();
+
+        return view('home', compact('total_users', 'total_abnormalities', 'total_work_orders', 'logs', 'statusAbnormalities', 'statusWorkOrders', 'notifications'));
     }
 }

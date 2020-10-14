@@ -10,6 +10,11 @@ class Section extends Model
     use SoftDeletes;
 
     protected $fillable = ['department_id', 'name'];
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
 
     public function department()
     {

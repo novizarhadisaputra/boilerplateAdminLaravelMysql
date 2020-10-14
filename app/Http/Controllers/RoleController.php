@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RoleStore;
+use App\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
@@ -16,9 +17,12 @@ class RoleController extends Controller
      */
     public function index()
     {
+        $notifications = Notification::all();
+
         $per_page = $request->per_page ?? 10;
         $roles = Role::with('users')->paginate($per_page);
-        return view('pages.roles.index', \compact('roles'));
+
+        return view('pages.roles.index', \compact('roles', 'notifications'));
     }
 
     /**
@@ -66,7 +70,10 @@ class RoleController extends Controller
         if (!$role) {
             return \abort(404);
         }
-        return \view('pages.roles.edit', compact('role'));
+
+        $notifications = Notification::all();
+
+        return \view('pages.roles.edit', compact('role', 'notifications'));
     }
 
     /**

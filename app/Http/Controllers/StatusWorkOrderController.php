@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StatusWorkOrderStore;
+use App\Notification;
 use App\StatusWorkOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -16,9 +17,12 @@ class StatusWorkOrderController extends Controller
      */
     public function index()
     {
+        $notifications = Notification::all();
+
         $per_page = $request->per_page ?? 10;
         $status_work_order = StatusWorkOrder::paginate($per_page);
-        return view('pages.status_work_order.index', \compact('status_work_order'));
+
+        return view('pages.status_work_order.index', \compact('status_work_order', 'notifications'));
     }
 
     /**
@@ -28,7 +32,9 @@ class StatusWorkOrderController extends Controller
      */
     public function create()
     {
-        return view('pages.status_work_order.create');
+        $notifications = Notification::all();
+
+        return view('pages.status_work_order.create', compact('notifications'));
     }
 
     /**
@@ -71,7 +77,10 @@ class StatusWorkOrderController extends Controller
         if (!$status_work_order) {
             return \abort(404);
         }
-        return \view('pages.status_work_order.edit', compact('status_work_order'));
+
+        $notifications = Notification::all();
+
+        return \view('pages.status_work_order.edit', compact('status_work_order', 'notifications'));
     }
 
     /**

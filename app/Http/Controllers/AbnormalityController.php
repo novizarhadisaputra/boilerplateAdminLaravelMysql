@@ -6,10 +6,13 @@ use App\Abnormality;
 use App\Events\ModelWasCreated;
 use App\Events\ModelWasDeleted;
 use App\Events\ModelWasUpdated;
+use App\Events\SubmitRequestMail;
 use App\Exports\AbnormalitiesExport;
 use App\Http\Requests\AbnormalityStore;
 use App\Http\Requests\AbnormalityUpdate;
+use App\Notification;
 use App\StatusAbnormality;
+use App\User;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -22,6 +25,8 @@ class AbnormalityController extends Controller
 
     public function index(Request $request)
     {
+        $notifications = Notification::all();
+
         $per_page = $request->per_page ?? 10;
 
         if (\auth()->user()->hasRole('user')) {
@@ -29,7 +34,7 @@ class AbnormalityController extends Controller
         }
 
         $abnormalities = ($this->findAll($request))->paginate($per_page);
-        return view('pages.abnormality.index', \compact('abnormalities'));
+        return view('pages.abnormality.index', \compact('abnormalities', 'notifications'));
     }
 
     public function findOne($request)
@@ -61,7 +66,9 @@ class AbnormalityController extends Controller
      */
     public function create()
     {
-        return view('pages.abnormality.create');
+        $notifications = Notification::all();
+
+        return view('pages.abnormality.create', compact('notifications'));
 
     }
 
@@ -124,7 +131,9 @@ class AbnormalityController extends Controller
             return abort(403);
         }
 
-        return view('pages.abnormality.detail', compact('abnormality'));
+        $notifications = Notification::all();
+
+        return view('pages.abnormality.detail', compact('abnormality', 'notifications'));
     }
 
     /**
@@ -143,8 +152,10 @@ class AbnormalityController extends Controller
             return \abort(404);
         }
 
+        $notifications = Notification::all();
+
         $status_abnormalities = StatusAbnormality::all();
-        return \view('pages.abnormality.edit', compact('abnormality', 'status_abnormalities'));
+        return \view('pages.abnormality.edit', compact('abnormality', 'status_abnormalities', 'notifications'));
     }
 
     /**
@@ -187,8 +198,17 @@ class AbnormalityController extends Controller
         }
 
         try {
-            //Memanggil Event ModelWasUpdated
-            event(new ModelWasUpdated($abnormality, 'The request abnormality just updated'));
+            $status = StatusAbnormality::where(['id' => $request->status_id])->first();
+            if ($abnormality->status_id !== $status->id) {
+                if ($status->name === 'Open' || $status->name === 'open' || $status->name === 'Closed' || $status->name === 'closed') {
+                    $abnormality->url = route('abnormality.update', $abnormality->id);
+                    event(new SubmitRequestMail($abnormality, 'The request abnormality change status to '.$status->name));
+                }
+                event(new ModelWasUpdated($abnormality, 'The request abnormality change status to '.$status->name));
+            } else {
+                //Memanggil Event ModelWasUpdated
+                event(new ModelWasUpdated($abnormality, 'The request abnormality just updated'));
+            }
             $abnormality->update($request->input());
             return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
         } catch (\Exception $e) {
@@ -237,6 +257,7 @@ class AbnormalityController extends Controller
     {
         $request->request->add(['id' => $abnormality]);
         $abnormality = $this->findOne($request);
+
         $status = StatusAbnormality::where(['name' => 'Open'])->orWhere(['name' => 'open'])->first();
         if ($abnormality->user_id !== auth()->user()->id) {
             return abort(403);
@@ -247,8 +268,9 @@ class AbnormalityController extends Controller
             $abnormality->save();
 
             //Memanggil Event ModelWasUpdated
-            event(new ModelWasUpdated($abnormality, 'The request abnormality change status to open'));
-
+            event(new ModelWasUpdated($abnormality, 'The request abnormality change status to '.$status->name));
+            $abnormality->url = route('abnormality.update', $abnormality->id);
+            event(new SubmitRequestMail($abnormality, 'The request abnormality change status to '.$status->name));
         }
         return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
     }

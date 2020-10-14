@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Department;
 use App\Http\Requests\SectionStore;
+use App\Notification;
 use App\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,9 +18,12 @@ class SectionController extends Controller
      */
     public function index()
     {
+        $notifications = Notification::all();
+
         $per_page = $request->per_page ?? 10;
         $sections = Section::with('department')->paginate($per_page);
-        return view('pages.sections.index', \compact('sections'));
+
+        return view('pages.sections.index', \compact('sections', 'notifications'));
     }
 
     public function findAll(Request $request)
@@ -40,8 +44,10 @@ class SectionController extends Controller
      */
     public function create()
     {
+        $notifications = Notification::all();
         $departments = Department::all();
-        return view('pages.sections.create', compact('departments'));
+
+        return view('pages.sections.create', compact('departments', 'notifications'));
     }
 
     /**
@@ -84,8 +90,10 @@ class SectionController extends Controller
         if (!$section) {
             return \abort(404);
         }
+        $notifications = Notification::all();
         $departments = Department::all();
-        return \view('pages.sections.edit', compact('section', 'departments'));
+
+        return \view('pages.sections.edit', compact('section', 'departments', 'notifications'));
     }
 
     /**

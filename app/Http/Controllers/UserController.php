@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Department;
 use App\Http\Requests\UserStore;
 use App\Http\Requests\UserUpdate;
+use App\Notification;
 use App\Section;
 use App\User;
 use Illuminate\Http\Request;
@@ -22,9 +23,12 @@ class UserController extends Controller
 
     public function index()
     {
+        $notifications = Notification::all();
+
         $per_page = $request->per_page ?? 10;
         $users = User::paginate($per_page);
-        return view('pages.users.index', \compact('users'));
+
+        return view('pages.users.index', \compact('users', 'notifications'));
     }
 
     /**
@@ -34,9 +38,12 @@ class UserController extends Controller
      */
     public function create()
     {
+        $notifications = Notification::all();
+
         $roles = Role::all();
         $departments = Department::all();
-        return view('pages.users.create', \compact('roles', 'departments'));
+
+        return view('pages.users.create', \compact('roles', 'departments', 'notifications'));
     }
 
     /**
@@ -66,8 +73,10 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $notifications = Notification::all();
+
         $roles = Role::all();
-        return view('pages.users.detail', compact('user', 'roles'));
+        return view('pages.users.detail', compact('user', 'roles', 'notifications'));
     }
 
     /**
@@ -81,14 +90,19 @@ class UserController extends Controller
         if (!$user) {
             return \abort(404);
         }
+
+        $notifications = Notification::all();
         $roles = Role::all();
         $departments = Department::all();
         $sections = Section::all();
-        return \view('pages.users.edit', compact('user', 'roles', 'departments', 'sections'));
+
+        return \view('pages.users.edit', compact('user', 'roles', 'departments', 'sections', 'notifications'));
     }
 
     public function profile($id)
     {
+        $notifications = Notification::all();
+
         if (!$user = User::find($id)) {
             return \abort(404);
         }
@@ -96,7 +110,7 @@ class UserController extends Controller
         $departments = Department::all();
         $sections = Section::all();
 
-        return \view('pages.users.edit', compact('user', 'roles', 'departments', 'sections'));
+        return \view('pages.users.edit', compact('user', 'roles', 'departments', 'sections', 'notifications'));
     }
 
     /**

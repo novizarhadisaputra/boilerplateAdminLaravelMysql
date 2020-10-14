@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Department;
 use App\Http\Requests\DepartmentStore;
+use App\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,9 +17,11 @@ class DepartmentController extends Controller
      */
     public function index()
     {
+        $notifications = Notification::all();
         $per_page = $request->per_page ?? 10;
         $departments = Department::paginate($per_page);
-        return view('pages.departments.index', \compact('departments'));
+
+        return view('pages.departments.index', \compact('departments', 'notifications'));
     }
 
     /**
@@ -28,7 +31,9 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        return view('pages.departments.create');
+        $notifications = Notification::all();
+
+        return view('pages.departments.create', compact('notifications'));
     }
 
     /**
@@ -70,7 +75,10 @@ class DepartmentController extends Controller
         if (!$department) {
             return \abort(404);
         }
-        return \view('pages.departments.edit', compact('department'));
+
+        $notifications = Notification::all();
+
+        return \view('pages.departments.edit', compact('department', 'notifications'));
     }
 
     /**

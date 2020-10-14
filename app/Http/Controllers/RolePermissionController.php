@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RolePermissionStore;
+use App\Notification;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -16,12 +17,16 @@ class RolePermissionController extends Controller
 
     public function index()
     {
+        $notifications = Notification::all();
+
         if(!auth()->user()->hasPermissionTo('management menu')) {
             abort(403);
         }
+
         $per_page = $request->per_page ?? 10;
         $roles = Role::with('permissions')->paginate($per_page);
-        return view('pages.roles_and_permissions.index', \compact('roles'));
+
+        return view('pages.roles_and_permissions.index', \compact('roles', 'notifications'));
     }
 
     /**
@@ -33,7 +38,10 @@ class RolePermissionController extends Controller
     {
         $roles = Role::all();
         $permissions = Permission::all();
-        return view('pages.roles_and_permissions.create', \compact('roles', 'permissions'));
+
+        $notifications = Notification::all();
+
+        return view('pages.roles_and_permissions.create', \compact('roles', 'permissions', 'notifications'));
     }
 
     /**
@@ -68,13 +76,15 @@ class RolePermissionController extends Controller
      */
     public function edit($id)
     {
+        $notifications = Notification::all();
+
         if (!$role = Role::find($id)) {
             return \abort(404);
         }
         $roles = Role::all();
         $permissions = Permission::all();
 
-        return \view('pages.roles_and_permissions.edit', compact('role', 'roles', 'permissions'));
+        return \view('pages.roles_and_permissions.edit', compact('role', 'roles', 'permissions', 'notifications'));
     }
 
     /**

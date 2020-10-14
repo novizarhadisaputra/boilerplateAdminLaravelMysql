@@ -6,9 +6,11 @@ use App\Category;
 use App\Events\ModelWasCreated;
 use App\Events\ModelWasDeleted;
 use App\Events\ModelWasUpdated;
+use App\Events\SubmitRequestMail;
 use App\Exports\WorkOrdersExport;
 use App\Http\Requests\WorkOrderStore;
 use App\Http\Requests\WorkOrderUpdate;
+use App\Notification;
 use App\StatusWorkOrder;
 use App\WorkOrder;
 use Illuminate\Http\Request;
@@ -18,6 +20,8 @@ class WorkOrderController extends Controller
 {
     public function index(Request $request)
     {
+        $notifications = Notification::all();
+
         $per_page = $request->per_page ?? 10;
 
         if (\auth()->user()->hasRole('user')) {
@@ -25,7 +29,7 @@ class WorkOrderController extends Controller
         }
 
         $workOrders = ($this->findAll($request))->paginate($per_page);
-        return view('pages.work_orders.index', \compact('workOrders'));
+        return view('pages.work_orders.index', \compact('workOrders', 'notifications'));
     }
 
     public function findOne($request)
@@ -58,7 +62,9 @@ class WorkOrderController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('pages.work_orders.create', \compact('categories'));
+        $notifications = Notification::all();
+
+        return view('pages.work_orders.create', \compact('categories', 'notifications'));
 
     }
 
@@ -122,8 +128,11 @@ class WorkOrderController extends Controller
                 return abort(403);
             }
         }
+
+        $notifications = Notification::all();
         $statusWorkOrders = StatusWorkOrder::all();
-        return view('pages.work_orders.detail', compact('workOrder', 'statusWorkOrders'));
+
+        return view('pages.work_orders.detail', compact('workOrder', 'statusWorkOrders', 'notifications'));
     }
 
     /**
@@ -142,9 +151,11 @@ class WorkOrderController extends Controller
             return \abort(404);
         }
 
+        $notifications = Notification::all();
         $categories = Category::all();
         $statusWorkOrders = StatusWorkOrder::all();
-        return \view('pages.work_orders.edit', compact('workOrder', 'statusWorkOrders', 'categories'));
+
+        return \view('pages.work_orders.edit', compact('workOrder', 'statusWorkOrders', 'categories', 'notifications'));
     }
 
     /**
@@ -186,8 +197,17 @@ class WorkOrderController extends Controller
         }
 
         try {
-            //Memanggil Event ModelWasUpdated
-            event(new ModelWasUpdated($workOrder, 'The request work order just updated'));
+            $status = StatusWorkOrder::where(['id' => $request->status_id])->first();
+            if ($workOrder->status_id !== $status->id) {
+                if ($status->name === 'Open' || $status->name === 'open' || $status->name === 'Closed' || $status->name === 'closed') {
+                    $workOrder->url = route('work-order.update', $workOrder->id);
+                    event(new SubmitRequestMail($workOrder, 'The request work order change status to '.$status->name));
+                }
+                event(new ModelWasUpdated($workOrder, 'The request work order change status to '.$status->name));
+            } else {
+                //Memanggil Event ModelWasUpdated
+                event(new ModelWasUpdated($workOrder, 'The request work order just updated'));
+            }
             $workOrder->update($request->input());
             return redirect()->route('work-order.index')->with('success', 'Update Successfully');
         } catch (\Exception $e) {
@@ -245,8 +265,9 @@ class WorkOrderController extends Controller
             $workOrder->status_id = $status->id;
             $workOrder->save();
 
-            //Memanggil Event ModelWasUpdated
-            event(new ModelWasUpdated($workOrder, 'The request work order change status to open'));
+            event(new ModelWasUpdated($workOrder, 'The request work order change status to '.$status->name));
+            $workOrder->url = route('work-order.update', $workOrder->id);
+            event(new SubmitRequestMail($workOrder, 'The request work order change status to '.$status->name));
         }
 
         return redirect()->route('work-order.index')->with('success', 'Update Successfully');

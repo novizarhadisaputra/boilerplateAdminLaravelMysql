@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use App\Http\Requests\CategoryStore;
+use App\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,9 +17,11 @@ class CategoryController extends Controller
 
     public function index()
     {
+        $notifications = Notification::all();
+
         $per_page = $request->per_page ?? 10;
         $categories = Category::paginate($per_page);
-        return view('pages.categories.index', \compact('categories'));
+        return view('pages.categories.index', \compact('categories' , 'notifications'));
     }
 
     /**
@@ -28,7 +31,9 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('pages.categories.create');
+        $notifications = Notification::all();
+
+        return view('pages.categories.create', compact('notifications'));
     }
 
     /**
@@ -67,10 +72,13 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        $notifications = Notification::all();
+
         if (!$category) {
             return \abort(404);
         }
-        return \view('pages.categories.edit', compact('category'));
+
+        return \view('pages.categories.edit', compact('category', 'notifications'));
     }
 
     /**

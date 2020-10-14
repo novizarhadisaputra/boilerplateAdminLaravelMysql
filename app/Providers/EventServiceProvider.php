@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Events\ModelWasCreated;
 use App\Events\ModelWasDeleted;
 use App\Events\ModelWasUpdated;
+use App\Events\SubmitRequestMail;
 use App\Listeners\LogCreated;
 use App\Listeners\LogDeleted;
 use App\Listeners\LogUpdated;
+use App\Listeners\SendRequestMail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -33,6 +35,9 @@ class EventServiceProvider extends ServiceProvider
         ModelWasDeleted::class => [
             LogDeleted::class,
         ],
+        SubmitRequestMail::class => [
+            SendRequestMail::class,
+        ]
     ];
 
     /**

@@ -9,6 +9,11 @@ class WorkOrder extends Model
 {
     use SoftDeletes;
     protected $fillable = ['title', 'description', 'location', 'pic_name', 'user_id', 'status_id', 'category_id'];
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
 
     public function files()
     {
