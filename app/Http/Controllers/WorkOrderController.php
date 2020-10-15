@@ -20,7 +20,7 @@ class WorkOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         $per_page = $request->per_page ?? 10;
 
@@ -35,9 +35,9 @@ class WorkOrderController extends Controller
     public function findOne($request)
     {
         $workOrder = WorkOrder::select();
-        foreach ($request as $key => $value) {
+        foreach ($request->except(['_token', '_method']) as $key => $value) {
             if ($request->filled($key)) {
-                $workOrder->where([$key => $value]);
+                $workOrder = $workOrder->where([$key => $value]);
             }
         }
         return $workOrder->first();
@@ -46,9 +46,9 @@ class WorkOrderController extends Controller
     public function findAll($request)
     {
         $workOrders = WorkOrder::select();
-        foreach ($request as $key => $value) {
+        foreach ($request->input() as $key => $value) {
             if ($request->filled($key)) {
-                $workOrders->where([$key => $value]);
+                $workOrders = $workOrders->where([$key => $value]);
             }
         }
         return $workOrders;
@@ -62,7 +62,7 @@ class WorkOrderController extends Controller
     public function create()
     {
         $categories = Category::all();
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         return view('pages.work_orders.create', \compact('categories', 'notifications'));
 
@@ -129,7 +129,7 @@ class WorkOrderController extends Controller
             }
         }
 
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
         $statusWorkOrders = StatusWorkOrder::all();
 
         return view('pages.work_orders.detail', compact('workOrder', 'statusWorkOrders', 'notifications'));
@@ -151,7 +151,7 @@ class WorkOrderController extends Controller
             return \abort(404);
         }
 
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
         $categories = Category::all();
         $statusWorkOrders = StatusWorkOrder::all();
 
@@ -200,6 +200,7 @@ class WorkOrderController extends Controller
             $status = StatusWorkOrder::where(['id' => $request->status_id])->first();
             if ($workOrder->status_id !== $status->id) {
                 if ($status->name === 'Open' || $status->name === 'open' || $status->name === 'Closed' || $status->name === 'closed') {
+                    $workOrder->update($request->input());
                     $workOrder->url = route('work-order.update', $workOrder->id);
                     event(new SubmitRequestMail($workOrder, 'The request work order change status to '.$status->name));
                 }
@@ -207,6 +208,7 @@ class WorkOrderController extends Controller
             } else {
                 //Memanggil Event ModelWasUpdated
                 event(new ModelWasUpdated($workOrder, 'The request work order just updated'));
+                $workOrder->update($request->input());
             }
             $workOrder->update($request->input());
             return redirect()->route('work-order.index')->with('success', 'Update Successfully');
@@ -249,9 +251,10 @@ class WorkOrderController extends Controller
         return Excel::download(new WorkOrdersExport($workOrders), 'work_orders.xlsx');
     }
 
-    public function open(Request $request, WorkOrder $workOrder)
+    public function open(Request $request, $id)
     {
-        $request->request->add(['id' => $workOrder]);
+        $workOrder = WorkOrder::find($id);
+        $request->request->add(['id' => $workOrder->id]);
         $workOrder = $this->findOne($request);
 
         $status = StatusWorkOrder::where(['name' => 'Open'])->orWhere(['name' => 'open'])->first();

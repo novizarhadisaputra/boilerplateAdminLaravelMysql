@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,7 +46,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('work-order/exports/excel', 'WorkOrderController@export')->name('work-order.exports.excel')->middleware('role:super admin');
         Route::post('abnormality/status/open/{id}', 'AbnormalityController@open')->name('abnormality.status.open');
         Route::post('work-order/status/open/{id}', 'WorkOrderController@open')->name('work-order.status.open');
-
     });
 });
 

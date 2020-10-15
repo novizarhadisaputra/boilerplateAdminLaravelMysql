@@ -4,21 +4,20 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class SubmitRequestMail
+class SendNotification implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $data;
-    public $message;
 
-    public function __construct($data, $message)
+    public function __construct($data)
     {
         $this->data = $data;
-        $this->message = $message;
     }
 
     /**
@@ -26,4 +25,18 @@ class SubmitRequestMail
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
+    public function broadcastOn()
+    {
+        return new Channel('my-channel');
+    }
+
+    public function broadcastAs()
+    {
+        return 'notifications';
+    }
+
+    public function broadcastWith()
+    {
+        return ['title' => 'This notification from ItSolutionStuff.com'];
+    }
 }

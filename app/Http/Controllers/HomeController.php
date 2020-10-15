@@ -32,7 +32,7 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         $total_users = User::whereHas('roles', function(Builder $query) {
             $query->whereNotIn('name', ['super admin', 'admin']);

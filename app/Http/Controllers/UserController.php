@@ -23,7 +23,7 @@ class UserController extends Controller
 
     public function index()
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         $per_page = $request->per_page ?? 10;
         $users = User::paginate($per_page);
@@ -38,7 +38,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         $roles = Role::all();
         $departments = Department::all();
@@ -73,7 +73,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         $roles = Role::all();
         return view('pages.users.detail', compact('user', 'roles', 'notifications'));
@@ -91,7 +91,7 @@ class UserController extends Controller
             return \abort(404);
         }
 
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
         $roles = Role::all();
         $departments = Department::all();
         $sections = Section::all();
@@ -101,7 +101,7 @@ class UserController extends Controller
 
     public function profile($id)
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         if (!$user = User::find($id)) {
             return \abort(404);

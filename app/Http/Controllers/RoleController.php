@@ -17,7 +17,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         $per_page = $request->per_page ?? 10;
         $roles = Role::with('users')->paginate($per_page);
@@ -71,7 +71,7 @@ class RoleController extends Controller
             return \abort(404);
         }
 
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         return \view('pages.roles.edit', compact('role', 'notifications'));
     }

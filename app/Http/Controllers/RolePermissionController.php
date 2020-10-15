@@ -17,7 +17,7 @@ class RolePermissionController extends Controller
 
     public function index()
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         if(!auth()->user()->hasPermissionTo('management menu')) {
             abort(403);
@@ -39,7 +39,7 @@ class RolePermissionController extends Controller
         $roles = Role::all();
         $permissions = Permission::all();
 
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         return view('pages.roles_and_permissions.create', \compact('roles', 'permissions', 'notifications'));
     }
@@ -76,7 +76,7 @@ class RolePermissionController extends Controller
      */
     public function edit($id)
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         if (!$role = Role::find($id)) {
             return \abort(404);

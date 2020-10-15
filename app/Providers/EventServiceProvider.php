@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Events\ModelWasCreated;
 use App\Events\ModelWasDeleted;
 use App\Events\ModelWasUpdated;
+use App\Events\SendNotification;
 use App\Events\SubmitRequestMail;
 use App\Listeners\LogCreated;
 use App\Listeners\LogDeleted;
@@ -37,7 +38,8 @@ class EventServiceProvider extends ServiceProvider
         ],
         SubmitRequestMail::class => [
             SendRequestMail::class,
-        ]
+        ],
+        SendNotification::class => [],
     ];
 
     /**

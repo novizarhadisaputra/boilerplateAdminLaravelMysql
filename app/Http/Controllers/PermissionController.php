@@ -17,7 +17,7 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         $per_page = $request->per_page ?? 10;
         $permissions = Permission::paginate($per_page);
@@ -32,7 +32,7 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         return view('pages.permissions.create', 'notifications');
     }
@@ -73,7 +73,7 @@ class PermissionController extends Controller
             return \abort(404);
         }
 
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         return \view('pages.permissions.edit', compact('permission', 'notifications'));
     }

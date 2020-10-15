@@ -18,7 +18,7 @@ class SectionController extends Controller
      */
     public function index()
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         $per_page = $request->per_page ?? 10;
         $sections = Section::with('department')->paginate($per_page);
@@ -44,7 +44,7 @@ class SectionController extends Controller
      */
     public function create()
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
         $departments = Department::all();
 
         return view('pages.sections.create', compact('departments', 'notifications'));
@@ -90,7 +90,7 @@ class SectionController extends Controller
         if (!$section) {
             return \abort(404);
         }
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
         $departments = Department::all();
 
         return \view('pages.sections.edit', compact('section', 'departments', 'notifications'));

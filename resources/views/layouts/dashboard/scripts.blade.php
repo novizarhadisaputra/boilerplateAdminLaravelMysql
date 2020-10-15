@@ -13,7 +13,6 @@
 
 <!-- JS Libraies -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-<script src="sweetalert2.all.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
 <!-- Optional: include a polyfill for ES6 Promises for IE11 -->
@@ -23,7 +22,17 @@
 <script src="{{ asset('assets/js/scripts.js') }}"></script>
 <script src="{{ asset('assets/js/custom.js') }}"></script>
 
+<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
 <script>
+    Pusher.logToConsole = true;
+    var pusher = new Pusher('771fe5c2a9fa7acceab9', {
+        cluster: 'ap1'
+    });
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('notifications', function (data) {
+        alert(JSON.stringify(data));
+    });
+
     $(document).ready(function () {
         if ($('select[name="department_id"]').val()) {
             let department_id = $('select[name="department_id"]').val();
@@ -58,7 +67,6 @@
     });
 
     $('.btn-modal').click(function (e) {
-        console.log('masuk')
         e.preventDefault();
         let html = `
     <div class="modal-header">

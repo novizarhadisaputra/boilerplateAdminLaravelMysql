@@ -17,7 +17,7 @@ class StatusAbnormalityController extends Controller
      */
     public function index()
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         $per_page = $request->per_page ?? 10;
         $status_abnormality = StatusAbnormality::paginate($per_page);
@@ -32,7 +32,7 @@ class StatusAbnormalityController extends Controller
      */
     public function create()
     {
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         return view('pages.status_abnormality.create', \compact('notifications'));
     }
@@ -78,7 +78,7 @@ class StatusAbnormalityController extends Controller
             return \abort(404);
         }
 
-        $notifications = Notification::all();
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         return \view('pages.status_abnormality.edit', compact('status_abnormality', 'notifications'));
     }
