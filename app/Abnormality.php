@@ -17,6 +17,8 @@ class Abnormality extends Model
         'deleted_at'
     ];
 
+    protected $appends = array('label');
+
     public function files()
     {
         return $this->morphMany(File::class, 'fileable');
@@ -40,5 +42,14 @@ class Abnormality extends Model
     public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->format('d M Y H:i:s');
+    }
+
+    public function getLabelAttribute($value)
+    {
+        if ((int) $this->status_id > 1 && $this->status_id < 5) {
+            return 'Outstanding';
+        } else if ($this->status_id == 5) {
+            return 'Closed';
+        }
     }
 }

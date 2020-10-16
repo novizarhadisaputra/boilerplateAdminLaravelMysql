@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Abnormality;
-use App\Http\Requests\DashboardRequest;
 use App\Log;
 use App\Notification;
 use App\StatusAbnormality;
@@ -32,9 +31,10 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+        $abnormalities = Abnormality::all();
         $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
-        $total_users = User::whereHas('roles', function(Builder $query) {
+        $total_users = User::whereHas('roles', function (Builder $query) {
             $query->whereNotIn('name', ['super admin', 'admin']);
         })->count();
 
@@ -48,5 +48,47 @@ class HomeController extends Controller
         $statusWorkOrders = StatusWorkOrder::whereIn('name', ['Outstanding', 'Closed'])->get();
 
         return view('home', compact('total_users', 'total_abnormalities', 'total_work_orders', 'logs', 'statusAbnormalities', 'statusWorkOrders', 'notifications'));
+    }
+
+    public function ajaxDataAbnormality(Request $request)
+    {
+        $abnormalities = Abnormality::select();
+        // Filter by Status
+        if ($request->filled('status_abnormality')) {
+            $condition = $request->status_abnormality === 'Closed' ? ['name', '=', 'Closed'] : ['name', '<>', 'Closed'];
+            $status = StatusAbnormality::where([$condition])->pluck('id');
+            $abnormalities = $abnormalities->whereIn('status_id', $status);
+        }
+
+        // Filter by Department
+        if ($request->filled('department')) {
+            $department = $request->department;
+            $abnormalities = $abnormalities - whereHas('user', function ($query) use ($department) {
+                $query->where('department_id', $department);
+            });
+        }
+        $abnormalities = $abnormalities->get();
+        return $abnormalities;
+    }
+
+    public function ajaxDataWorkOrder(Request $request)
+    {
+        $workOrders = WorkOrder::select();
+        // Filter by Status
+        if ($request->filled('status_abnormality')) {
+            $condition = $request->status_abnormality === 'Closed' ? ['name', '=', 'Closed'] : ['name', '<>', 'Closed'];
+            $status = StatusWorkOrder::where([$condition])->pluck('id');
+            $workOrders = $workOrders->whereIn('status_id', $status);
+        }
+
+        // Filter by Department
+        if ($request->filled('department')) {
+            $department = $request->department;
+            $workOrders = $workOrders - whereHas('user', function ($query) use ($department) {
+                $query->where('department_id', $department);
+            });
+        }
+        $workOrders = $workOrders->get();
+        return $workOrders;
     }
 }

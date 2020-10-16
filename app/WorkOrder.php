@@ -12,8 +12,10 @@ class WorkOrder extends Model
     protected $dates = [
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_at',
     ];
+
+    protected $appends = array('label');
 
     public function files()
     {
@@ -38,5 +40,14 @@ class WorkOrder extends Model
     public function logs()
     {
         return $this->morphMany(Log::class, 'logable')->orderBy('created_at', 'desc');
+    }
+
+    public function getLabelAttribute($value)
+    {
+        if ($this->status_id > 1 && $this->status_id < 5) {
+            return 'Outstanding';
+        } else if ($this->status_id == 5) {
+            return 'Closed';
+        }
     }
 }

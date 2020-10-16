@@ -14,6 +14,7 @@
 <!-- JS Libraies -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 
 <!-- Optional: include a polyfill for ES6 Promises for IE11 -->
 <script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
@@ -37,6 +38,9 @@
         if ($('select[name="department_id"]').val()) {
             let department_id = $('select[name="department_id"]').val();
             showSections(department_id);
+        }
+        if ($('#workOrderPie') || $('#abnormalityPie')) {
+            getDataAbnormality();
         }
     });
 
@@ -110,6 +114,115 @@
                 $('select[name="section_id"]').html(options.join(''));
             }
         });
+    }
+
+    async function getDataWorkOrder(time = null, status = null, department = null) {
+        let query = {
+            time: time,
+            status: status,
+            department: department
+        }
+        $.get(`{{route('work-order.ajax.data')}}`, query, function (response) {
+            if (response) {
+                console.log('response', response)
+            }
+        });
+    }
+
+    async function showPieChartWorkOrder(data = null) {
+        let ctx = document.getElementById('workOrderPie').getContext('2d');
+        let myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+        });
+    }
+
+    async function getDataAbnormality(time = null, status = null, department = null) {
+        let query = {
+            time: time,
+            status: status,
+            department: department
+        }
+        $.get(`{{route('abnormality.ajax.data')}}`, query, function (response) {
+            if (response) {
+                showPieChartAbnormality(response);
+            }
+        });
+    }
+    async function showPieChartAbnormality(data = null) {
+        $('#abnormalityPie').empty();
+        let newData = [];
+        let newLabel = [];
+        let closed;
+        let outstanding;
+        if (data != null) {
+            let dataGroup = await groupBy(data, 'label');
+            for (const key in dataGroup) {
+                if (dataGroup.hasOwnProperty(key)) {
+                    newLabel.push(key);
+                    newData.push(dataGroup[key].length)
+                }
+            }
+        }
+
+        let ctx = document.getElementById('abnormalityPie').getContext('2d');
+        let myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: newLabel,
+                datasets: [{
+                    label: '# of Votes',
+                    data: newData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+        });
+    }
+
+    async function groupBy(arr, key) {
+        return arr.reduce(function (rv, x) {
+            (rv[x[key]] = rv[x[key]] || []).push(x);
+            return rv;
+        }, {});
     }
 
 </script>

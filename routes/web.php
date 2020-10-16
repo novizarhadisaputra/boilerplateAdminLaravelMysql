@@ -41,7 +41,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'request'], function () {
         Route::resource('work-order', 'WorkOrderController');
+        Route::get('work-order/ajax/data','HomeController@ajaxDataWorkOrder')->name('work-order.ajax.data');
         Route::resource('abnormality', 'AbnormalityController');
+        Route::get('abnormality/ajax/data','HomeController@ajaxDataAbnormality')->name('abnormality.ajax.data');
         Route::get('abnormality/exports/excel', 'AbnormalityController@export')->name('abnormality.exports.excel')->middleware('role:super admin');
         Route::get('work-order/exports/excel', 'WorkOrderController@export')->name('work-order.exports.excel')->middleware('role:super admin');
         Route::post('abnormality/status/open/{id}', 'AbnormalityController@open')->name('abnormality.status.open');

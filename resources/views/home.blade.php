@@ -84,7 +84,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <canvas id="anormalityPie" height="182"></canvas>
+                        <canvas id="abnormalityPie" height="182"></canvas>
                     </div>
                 </div>
             </div>
@@ -101,7 +101,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <canvas id="anormalityPie" height="182"></canvas>
+                        <canvas id="workOrderPie" height="182"></canvas>
                     </div>
                 </div>
             </div>
