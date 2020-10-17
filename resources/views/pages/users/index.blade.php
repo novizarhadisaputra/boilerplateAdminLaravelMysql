@@ -58,7 +58,7 @@
                                         data-toggle="tooltip" title="" data-original-title="Detail">
                                         <i class="fas fa-info"></i>
                                     </a>
-                                    <a href="{{ route('users.destroy', $item->id) }}" data-name="{{$item->name.' / '.$item->username}}" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-original-title="Remove" class="btn btn-danger btn-delete">
+                                    <a href="{{ route('users.destroy', $item->id) }}" data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-wording="Are you sure delete {{ $item->name }} / {{ $item->username }}" data-title="Remove User" class="btn btn-danger btn-modal">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </td>

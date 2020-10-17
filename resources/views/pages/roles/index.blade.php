@@ -54,8 +54,7 @@
                                         data-toggle="tooltip" title="" data-original-title="Edit">
                                         <i class="fas fa-pen-alt"></i>
                                     </a>
-                                    <a href="{{ route('roles.destroy', $item->id) }}" data-name="{{$item->name}}" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-target="#modalDelete-{{ $item->id }}"
-                                        data-original-title="Remove" class="btn btn-danger btn-delete">
+                                    <a href="{{ route('roles.destroy', $item->id) }}" data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-wording="Are you sure delete {{ $item->name }}" data-title="Remove Role" class="btn btn-danger btn-modal">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                     {{-- <form id="delete-{{ $loop->iteration }}"

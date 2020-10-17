@@ -46,7 +46,7 @@
                                         data-original-title="Edit">
                                         <i class="fas fa-pen-alt"></i>
                                     </a>
-                                    <a href="{{ route('categories.destroy', $item->id) }}" data-name="{{$item->name}}" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-original-title="Remove" class="btn btn-danger btn-delete">
+                                    <a href="{{ route('categories.destroy', $item->id) }}" data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-wording="Are you sure delete {{ $item->name }}" data-title="Remove Category" class="btn btn-danger btn-modal">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </td>

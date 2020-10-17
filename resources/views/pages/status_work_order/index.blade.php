@@ -46,15 +46,9 @@
                                         data-original-title="Edit">
                                         <i class="fas fa-pen-alt"></i>
                                     </a>
-                                    <a href="{{ route('status-work-order.destroy', $item->id) }}" data-toggle="tooltip" title=""
-                                    data-original-title="Remove" class="btn btn-danger" onclick="event.preventDefault();
-                                            document.getElementById('delete-{{ $loop->iteration }}').submit();">
+                                    <a href="{{ route('status-work-order.destroy', $item->id) }}" data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}} data-identity={{ $item->id }} data-toggle="modal" data-wording="Are you sure delete {{ $item->title }}" data-title="Remove Status Work Order" class="btn btn-danger btn-modal">
                                         <i class="fas fa-trash"></i>
                                     </a>
-                                    <form id="delete-{{ $loop->iteration }}" action="{{ route('status-work-order.destroy', $item->id) }}" method="POST" class="d-none">
-                                        @csrf
-                                        @method('DELETE');
-                                    </form>
                                 </td>
                             </tr>
                             @endforeach
