@@ -32,7 +32,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('pages.roles.create');
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
+
+        return view('pages.roles.create', \compact('notifications'));
     }
 
     /**

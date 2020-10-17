@@ -34,7 +34,7 @@ class PermissionController extends Controller
     {
         $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
-        return view('pages.permissions.create', 'notifications');
+        return view('pages.permissions.create', compact('notifications'));
     }
 
     /**
