@@ -12,6 +12,26 @@
             <div class="col-lg-6 col-md-6 col-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
+                        <h4>Operator Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled list-unstyled-border">
+                            <li class="media">
+                                <div class="media-body">
+                                    <div class="float-right text-primary">{{ $workOrder->worked_at ? $workOrder->worked_at : 'No schedule' }}</div>
+                                    <div class="media-title">Operator Name</div>
+                                    <span class="text-small text-muted">{{ $workOrder->operator ? $workOrder->operator : 'No operator available' }}</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
                         <h4>Detail Work Order</h4>
                         <div class="card-header-action">
                             <a href="{{ route('work-order.index') }}" class="btn btn-info">List Work Orders</a>

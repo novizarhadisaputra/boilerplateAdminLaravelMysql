@@ -6,6 +6,7 @@ use App\Category;
 use App\Events\ModelWasCreated;
 use App\Events\ModelWasDeleted;
 use App\Events\ModelWasUpdated;
+use App\Events\SendNotification;
 use App\Events\SubmitRequestMail;
 use App\Exports\WorkOrdersExport;
 use App\Http\Requests\WorkOrderStore;
@@ -13,7 +14,11 @@ use App\Http\Requests\WorkOrderUpdate;
 use App\Notification;
 use App\StatusWorkOrder;
 use App\WorkOrder;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class WorkOrderController extends Controller
@@ -24,11 +29,9 @@ class WorkOrderController extends Controller
 
         $per_page = $request->per_page ?? 10;
 
-        if (\auth()->user()->hasRole('user')) {
-            $request->request->add(['user_id' => auth()->user()->id]);
-        }
-
-        $workOrders = ($this->findAll($request))->paginate($per_page);
+        $data = $this->findAll($request);
+        $data = $request->filled('search') ? $this->search($request, $data) : $data;
+        $workOrders = $data->paginate($per_page);
         return view('pages.work_orders.index', \compact('workOrders', 'notifications'));
     }
 
@@ -40,16 +43,31 @@ class WorkOrderController extends Controller
                 $workOrder = $workOrder->where([$key => $value]);
             }
         }
+
         return $workOrder->first();
     }
 
     public function findAll($request)
     {
+        if (\auth()->user()->hasRole('user')) {
+            $request->request->add(['user_id' => auth()->user()->id]);
+        }
+
         $workOrders = WorkOrder::select();
-        foreach ($request->input() as $key => $value) {
+        foreach ($request->except(['search', '_method', '_token']) as $key => $value) {
             if ($request->filled($key)) {
-                $workOrders = $workOrders->where([$key => $value]);
+                $workOrders = $workOrders->orWhere([$key => $value]);
             }
+        }
+        return $workOrders;
+    }
+
+    public function search($request, $data)
+    {
+        $workOrders = $data;
+        $workOrders = $request->user_id ? $workOrders->where(['user_id' => $request->user_id]) : $workOrders;
+        foreach (['title', 'description', 'location', 'pic_name', 'operator', 'worked_at'] as $key) {
+            $workOrders = $workOrders->orWhere($key, 'like', '%' . $request->search . '%');
         }
         return $workOrders;
     }
@@ -123,7 +141,7 @@ class WorkOrderController extends Controller
             return \abort(404);
         }
 
-        if (auth()->user()->hasRole('user')) {
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
             if ($workOrder->user_id !== auth()->user()->id) {
                 return abort(403);
             }
@@ -149,6 +167,12 @@ class WorkOrderController extends Controller
 
         if (!$workOrder) {
             return \abort(404);
+        }
+
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            if ($workOrder->status->name != 'Draft') {
+                return abort(403);
+            }
         }
 
         $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
@@ -202,9 +226,9 @@ class WorkOrderController extends Controller
                 if ($status->name === 'Open' || $status->name === 'open' || $status->name === 'Closed' || $status->name === 'closed') {
                     $workOrder->update($request->input());
                     $workOrder->url = route('work-order.update', $workOrder->id);
-                    event(new SubmitRequestMail($workOrder, 'The request work order change status to '.$status->name));
+                    event(new SubmitRequestMail($workOrder, 'The request work order change status to ' . $status->name));
                 }
-                event(new ModelWasUpdated($workOrder, 'The request work order change status to '.$status->name));
+                event(new ModelWasUpdated($workOrder, 'The request work order change status to ' . $status->name));
             } else {
                 //Memanggil Event ModelWasUpdated
                 event(new ModelWasUpdated($workOrder, 'The request work order just updated'));
@@ -251,27 +275,96 @@ class WorkOrderController extends Controller
         return Excel::download(new WorkOrdersExport($workOrders), 'work_orders.xlsx');
     }
 
-    public function open(Request $request, $id)
+    public function draft(Request $request, $id)
     {
         $workOrder = WorkOrder::find($id);
-        $request->request->add(['id' => $workOrder->id]);
-        $workOrder = $this->findOne($request);
-
-        $status = StatusWorkOrder::where(['name' => 'Open'])->orWhere(['name' => 'open'])->first();
-        if (auth()->user()->hasRole('user')) {
+        $status = StatusWorkOrder::where(['name' => 'Draft'])->orWhere(['name' => 'draft'])->first();
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
             if ($workOrder->user_id !== auth()->user()->id) {
                 return abort(403);
             }
         }
 
-        if ($workOrder->status->name === 'Draft' || $workOrder->status->name === 'draft') {
-            $workOrder->status_id = $status->id;
-            $workOrder->save();
+        $workOrder->status_id = $status->id;
+        $workOrder->save();
 
-            event(new ModelWasUpdated($workOrder, 'The request work order change status to '.$status->name));
-            $workOrder->url = route('work-order.update', $workOrder->id);
-            event(new SubmitRequestMail($workOrder, 'The request work order change status to '.$status->name));
+        event(new ModelWasUpdated($workOrder, 'The request work order change status to ' . $status->name));
+        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+    }
+
+    public function open(Request $request, $id)
+    {
+        $workOrder = WorkOrder::find($id);
+        $status = StatusWorkOrder::where(['name' => 'Open'])->orWhere(['name' => 'open'])->first();
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            if ($workOrder->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
         }
+
+        $workOrder->status_id = $status->id;
+        $workOrder->save();
+
+        event(new ModelWasUpdated($workOrder, 'The request work order change status to ' . $status->name));
+        $workOrder->url = route('work-order.update', $workOrder->id);
+        event(new SubmitRequestMail($workOrder, 'The request work order change status to ' . $status->name));
+        event(new SendNotification($workOrder));
+        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+    }
+
+    public function approved(Request $request, $id)
+    {
+        $workOrder = WorkOrder::find($id);
+        $status = StatusWorkOrder::where(['name' => 'Approved'])->orWhere(['name' => 'approved'])->first();
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            if ($workOrder->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
+        }
+
+        $workOrder->status_id = $status->id;
+        $workOrder->operator = $request->operator;
+        $workOrder->worked_at = strtotime($request->worked_at);
+        $workOrder->save();
+
+        event(new ModelWasUpdated($workOrder, 'The request work order change status to ' . $status->name));
+        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+    }
+
+    public function on_progress(Request $request, $id)
+    {
+        $workOrder = WorkOrder::find($id);
+        $status = StatusWorkOrder::where(['name' => 'On Progress'])->orWhere(['name' => 'on progress'])->first();
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            if ($workOrder->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
+        }
+
+        $workOrder->status_id = $status->id;
+        $workOrder->save();
+
+        event(new ModelWasUpdated($workOrder, 'The request work order change status to ' . $status->name));
+        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+    }
+
+    public function closed(Request $request, $id)
+    {
+        $workOrder = WorkOrder::find($id);
+        $status = StatusWorkOrder::where(['name' => 'Closed'])->orWhere(['name' => 'closed'])->first();
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            if ($workOrder->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
+        }
+
+        $workOrder->status_id = $status->id;
+        $workOrder->save();
+
+        event(new ModelWasUpdated($workOrder, 'The request work order change status to ' . $status->name));
+        $workOrder->url = route('work-order.update', $workOrder->id);
+        event(new SubmitRequestMail($workOrder, 'The request work order change status to ' . $status->name));
+        event(new SendNotification($workOrder));
 
         return redirect()->route('work-order.index')->with('success', 'Update Successfully');
     }

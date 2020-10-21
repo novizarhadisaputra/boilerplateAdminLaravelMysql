@@ -30,11 +30,9 @@ class AbnormalityController extends Controller
 
         $per_page = $request->per_page ?? 10;
 
-        if (\auth()->user()->hasRole('user')) {
-            $request->request->add(['user_id' => auth()->user()->id]);
-        }
-
-        $abnormalities = ($this->findAll($request))->paginate($per_page);
+        $data = $this->findAll($request);
+        $data = $request->filled('search') ? $this->search($request, $data) : $data;
+        $abnormalities = $data->paginate($per_page);
         return view('pages.abnormality.index', \compact('abnormalities', 'notifications'));
     }
 
@@ -51,11 +49,25 @@ class AbnormalityController extends Controller
 
     public function findAll($request)
     {
+        if (\auth()->user()->hasRole('user')) {
+            $request->request->add(['user_id' => auth()->user()->id]);
+        }
+
         $abnormalities = Abnormality::select();
-        foreach ($request->input() as $key => $value) {
+        foreach ($request->except(['search', '_method', '_token']) as $key => $value) {
             if ($request->filled($key)) {
                 $abnormalities = $abnormalities->where([$key => $value]);
             }
+        }
+        return $abnormalities;
+    }
+
+    public function search($request, $data)
+    {
+        $abnormalities = $data;
+        $abnormalities = $request->user_id ? $abnormalities->where(['user_id' => $request->user_id]) : $abnormalities;
+        foreach (['title', 'description', 'location', 'pic_name', 'operator', 'worked_at'] as $key) {
+            $abnormalities = $abnormalities->orWhere($key, 'like', '%' . $request->search . '%');
         }
         return $abnormalities;
     }
@@ -256,26 +268,103 @@ class AbnormalityController extends Controller
         }
     }
 
+    public function draft(Request $request, $id)
+    {
+        $abnormality = Abnormality::find($id);
+        $status = StatusAbnormality::where(['name' => 'Draft'])->orWhere(['name' => 'draft'])->first();
+        if ($abnormality->user_id !== auth()->user()->id) {
+            return abort(403);
+        }
+
+        $abnormality->status_id = $status->id;
+        $abnormality->save();
+
+        //Memanggil Event ModelWasUpdated
+        event(new ModelWasUpdated($abnormality, 'The request abnormality change status to ' . $status->name));
+        return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
+    }
+
     public function open(Request $request, $id)
     {
         $abnormality = Abnormality::find($id);
         $request->request->add(['id' => $abnormality->id]);
         $abnormality = $this->findOne($request);
+
         $status = StatusAbnormality::where(['name' => 'Open'])->orWhere(['name' => 'open'])->first();
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            if ($abnormality->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
+        }
+
+        $abnormality->status_id = $status->id;
+        $abnormality->save();
+
+        //Memanggil Event ModelWasUpdated
+        event(new ModelWasUpdated($abnormality, 'The request abnormality change status to ' . $status->name));
+        $abnormality->url = route('abnormality.update', $abnormality->id);
+        event(new SubmitRequestMail($abnormality, 'The request abnormality change status to ' . $status->name));
+        event(new SendNotification($abnormality));
+
+        return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
+    }
+
+    public function approved(Request $request, $id)
+    {
+        $abnormality = Abnormality::find($id);
+        $status = StatusAbnormality::where(['name' => 'Approved'])->orWhere(['name' => 'approved'])->first();
         if ($abnormality->user_id !== auth()->user()->id) {
             return abort(403);
         }
 
-        if ($abnormality->status->name === 'Draft' || $abnormality->status->name === 'draft') {
-            $abnormality->status_id = $status->id;
-            $abnormality->save();
+        $abnormality->status_id = $status->id;
+        $abnormality->operator = $request->operator;
+        $abnormality->worked_at = strtotime($request->worked_at);
+        $abnormality->save();
 
-            //Memanggil Event ModelWasUpdated
-            event(new ModelWasUpdated($abnormality, 'The request abnormality change status to ' . $status->name));
-            $abnormality->url = route('abnormality.update', $abnormality->id);
-            event(new SubmitRequestMail($abnormality, 'The request abnormality change status to ' . $status->name));
-            event(new SendNotification($abnormality));
+        //Memanggil Event ModelWasUpdated
+        event(new ModelWasUpdated($abnormality, 'The request abnormality change status to ' . $status->name));
+        return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
+    }
+
+    public function on_progress(Request $request, $id)
+    {
+        $abnormality = Abnormality::find($id);
+        $status = StatusAbnormality::where(['name' => 'On Progress'])->orWhere(['name' => 'on_progress'])->first();
+        if ($abnormality->user_id !== auth()->user()->id) {
+            return abort(403);
         }
+
+        $abnormality->status_id = $status->id;
+        $abnormality->save();
+
+        //Memanggil Event ModelWasUpdated
+        event(new ModelWasUpdated($abnormality, 'The request abnormality change status to ' . $status->name));
+        return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
+    }
+
+    public function closed(Request $request, $id)
+    {
+        $abnormality = Abnormality::find($id);
+        $request->request->add(['id' => $abnormality->id]);
+        $abnormality = $this->findOne($request);
+
+        $status = StatusAbnormality::where(['name' => 'Closed'])->orWhere(['name' => 'closed'])->first();
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            if ($abnormality->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
+        }
+
+        $abnormality->status_id = $status->id;
+        $abnormality->save();
+
+        //Memanggil Event ModelWasUpdated
+        event(new ModelWasUpdated($abnormality, 'The request abnormality change status to ' . $status->name));
+        $abnormality->url = route('abnormality.update', $abnormality->id);
+        event(new SubmitRequestMail($abnormality, 'The request abnormality change status to ' . $status->name));
+        event(new SendNotification($abnormality));
+
         return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
     }
 }

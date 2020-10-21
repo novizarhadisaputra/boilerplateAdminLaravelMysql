@@ -24,10 +24,8 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="d-flex justify-content-center">
 
-                </div>
-                <div class="table-responsive">
+                {{-- <div class="table-responsive">
                     <table class="table table-striped" id="table-1">
                         <thead>
                             <tr>
@@ -73,6 +71,125 @@
                                 </td>
                             </tr>
                             @endforeach
+                        </tbody>
+                    </table>
+                </div> --}}
+                {{-- Pagination --}}
+                {{-- <div class="d-flex justify-content-center">
+                    {!! $abnormalities->links() !!}
+                </div> --}}
+                <div class="float-right form-group">
+                    <form action="{{ route('abnormality.index') }}">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="search" placeholder="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="table-1">
+                        <thead>
+                            <tr>
+                                <th width="5%" class="text-center">
+                                    #
+                                </th>
+                                <th width="25%">Title</th>
+                                <th>User</th>
+                                <th width="10%">Status</th>
+                                <th width="10%">Created At</th>
+                                <th width="20%">Action</th>
+                                <th width="20%">Change Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($abnormalities as $item)
+                            <tr>
+                                <td>
+                                    {{($abnormalities->currentPage() - 1) * $abnormalities->perPage() + $loop->iteration}}
+                                </td>
+                                <td> {{ $item->title }} </td>
+                                <td> {{ $item->user->name }} </td>
+                                <td><a class="btn btn-sm btn-primary" href="#">{{ $item->status->name }}</a></td>
+                                <td> {{ $item->created_at }} </td>
+                                <td>
+                                    <a href={{ route('abnormality.show', $item->id) }} class="btn btn-info"
+                                        data-toggle="tooltip" title="" data-original-title="Detail">
+                                        <i class="fas fa-info"></i>
+                                    </a>
+                                    @if (auth()->user()->hasRole(['super admin', 'admin']))
+                                    @can('edit abnormality')
+                                    <a href={{ route('abnormality.edit', $item->id) }} class="btn btn-warning"
+                                        data-toggle="tooltip" title="" data-original-title="Edit">
+                                        <i class="fas fa-pen-alt"></i>
+                                    </a>
+                                    @endcan
+                                    @else
+                                    @if ($item->status->name == 'Draft')
+                                    @can('edit abnormality')
+                                    <a href={{ route('abnormality.edit', $item->id) }} class="btn btn-warning"
+                                        data-toggle="tooltip" title="" data-original-title="Edit">
+                                        <i class="fas fa-pen-alt"></i>
+                                    </a>
+                                    @endcan
+                                    @endif
+                                    @endif
+
+                                    @can('delete abnormality')
+                                    <a href="{{ route('abnormality.destroy', $item->id) }}" data-button-label="Delete"
+                                        data-method="DELETE" data-csrf={{csrf_token()}} data-identity={{ $item->id }}
+                                        data-toggle="modal" data-wording="Are you sure delete {{ $item->title }}"
+                                        data-title="Remove Abnormality" class="btn btn-danger btn-modal">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                    @endcan
+                                </td>
+                                <td>
+                                    @if ($item->status_before != '' && $item->status_before != null && $item->status->name != 'Closed')
+
+                                    <a href="{{ route('abnormality.status.'. $item->status_before, $item->id) }}"
+                                        data-button-label="Update" data-method="POST" data-csrf={{csrf_token()}}
+                                        data-identity={{ $item->id }} data-toggle="modal"
+                                        data-wording="Are you sure change status to {{ $item->before_label }} {{ $item->title }}"
+                                        data-title="{{ $item->before_label }} Abnormality"
+                                        class="btn btn-primary btn-modal">
+                                        <i class="fas fa-undo"></i>
+                                    </a>
+                                    @endif
+
+                                    @if ($item->status_after != '' && $item->status_after != null)
+                                    <a href="{{ route('abnormality.status.'. $item->status_after, $item->id) }}"
+                                        data-button-label="Update" data-method="POST" data-csrf={{csrf_token()}}
+                                        data-identity={{ $item->id }} data-toggle="modal" data-content-html="@if (auth()->user()->hasRole(['super admin', 'admin']) && $item->status_after == 'approved')
+                                            <div class='form-row'>
+                                                <div class='form-group col-md-12'>
+                                                    <label for='operator'>Operator Name</label>
+                                                    <input type='text' class='form-control' id='operator' name='operator'>
+                                                </div>
+                                            </div>
+                                            <div class='form-row'>
+                                                <div class='form-group col-md-12'>
+                                                    <label for='work_at'>Worked At</label>
+                                                    <input type='date' class='form-control' id='worked_at' name='worked_at'>
+                                                </div>
+                                            </div>
+                                        @endif"
+                                        data-wording="Are you sure change status to {{ $item->after_label }} {{ $item->title }}"
+                                        data-title="{{ $item->after_label }} Abnormality"
+                                        class="btn btn-success btn-modal">
+                                        <i class="fas fa-share-square"></i>
+                                    </a>
+                                    @endif
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="7" class="text-center font-weight-bold">
+                                    Data is Empty
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

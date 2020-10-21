@@ -55,14 +55,13 @@
             })
         }
         let html = `
-        ${$('#files').html()}
         <div class="form-group col-md-4">
             <div class="custom-file mb-3">
-                <input type="file" class="custom-file-input" id="customFile" name="files[]">
+                <input type="file" class="custom-file-input" name="files[]">
                 <label class="custom-file-label" for="customFile">Choose file</label>
             </div>
         </div>`;
-        $('#files').html(html);
+        $('#files').append(html);
     });
 
     $('select[name="department_id"]').change(function (e) {
@@ -74,7 +73,7 @@
         e.preventDefault();
         let html = `
     <div class="modal-header">
-        <h5 class="modal-title">Delete</h5>
+        <h5 class="modal-title">${$(this).data('title')}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -83,7 +82,7 @@
         <input type="hidden" name="_token" value="${$(this).data('csrf')}">
         <input type="hidden" name="_method" value="${$(this).data('method')}">
     <div class="modal-body">
-        ${$(this).data('wording')} ?
+        ${$(this).data('content-html') != "" && $(this).data('content-html') != undefined ? $(this).data('content-html') : $(this).data('wording') +' ?'}
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -180,6 +179,7 @@
         let outstanding;
         if (data != null) {
             let dataGroup = await groupBy(data, 'label');
+            console.log('data', data)
             for (const key in dataGroup) {
                 if (dataGroup.hasOwnProperty(key)) {
                     newLabel.push(key);

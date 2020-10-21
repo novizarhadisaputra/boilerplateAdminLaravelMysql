@@ -135,6 +135,10 @@ class UserController extends Controller
             }
         }
 
+        if ($request->filled('password')) {
+            $validator['password'] = 'required|confirmed';
+        }
+
         $validator = Validator::make($request->all(), $validator);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());

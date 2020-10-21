@@ -20,8 +20,10 @@ class CreateWorkOrdersTable extends Migration
             $table->text('description');
             $table->string('location');
             $table->string('pic_name');
+            $table->string('operator')->nullable();
             $table->unsignedBigInteger('status_id');
             $table->unsignedBigInteger('category_id');
+            $table->dateTime('worked_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

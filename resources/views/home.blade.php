@@ -74,7 +74,7 @@
             <div class="col-lg-6 col-md-12 col-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Work Orders</h4>
+                        <h4>Abnormalities</h4>
                         <div class="card-header-action">
                             <select name="filterChart" class="custom-select" id="filterChart">
                                @foreach ($statusWorkOrders as $item)
@@ -91,7 +91,7 @@
             <div class="col-lg-6 col-md-12 col-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Abnormalities</h4>
+                        <h4>Work Orders</h4>
                         <div class="card-header-action">
                             <select name="filterChart" class="custom-select" id="filterChart">
                                @foreach ($statusAbnormalities as $item)

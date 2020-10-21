@@ -12,6 +12,26 @@
             <div class="col-lg-6 col-md-6 col-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
+                        <h4>Operator Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled list-unstyled-border">
+                            <li class="media">
+                                <div class="media-body">
+                                    <div class="float-right text-primary">{{ $abnormality->work_at ? $abnormality->work_at : 'No schedule' }}</div>
+                                    <div class="media-title">Operator Name</div>
+                                    <span class="text-small text-muted">{{ $abnormality->operator ? $abnormality->operator : 'No operator available' }}</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
                         <h4>Detail Abnormality</h4>
                         <div class="card-header-action">
                             <a href="{{ route('abnormality.index') }}" class="btn btn-info">List Abnormalities</a>

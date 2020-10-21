@@ -33,7 +33,7 @@
                     <div class="form-row" id="files">
                         <div class="form-group col-md-4">
                             <div class="custom-file mb-3">
-                                <input type="file" class="custom-file-input" id="customFile" accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
+                                <input type="file" class="custom-file-input" name="files[]">
                                 <label class="custom-file-label" for="customFile">Choose file</label>
                             </div>
                         </div>
@@ -42,6 +42,16 @@
                         <div class="form-group col-md-12">
                             <label for="title">Title</label>
                             <input type="text" class="form-control" id="title" name="title">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="category_id">Category</label>
+                            <select type="text" class="form-control custom-select" id="category_id" name="category_id">
+                                @foreach ($categories as $item)
+                                <option value="{{$item->id}}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="form-row">
@@ -60,16 +70,6 @@
                         <div class="form-group col-md-12">
                             <label for="pic_name">PIC Name</label>
                             <input type="text" class="form-control" id="pic_name" name="pic_name">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <label for="category_id">Category</label>
-                            <select type="text" class="form-control custom-select" id="category_id" name="category_id">
-                                @foreach ($categories as $item)
-                                <option value="{{$item->id}}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
                         </div>
                     </div>
                 </div>

@@ -75,9 +75,9 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-6 col-12">
-                                    <label>Username</label>
-                                    <input type="text" class="form-control" name="username"
-                                        value="{{ $user->username }}" required="">
+                                    <label>NPK</label>
+                                    <input type="text" class="form-control" name="npk"
+                                        value="{{ $user->npk }}" required="">
                                     <div class="invalid-feedback">
 
                                     </div>
@@ -103,15 +103,14 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col-md-6 col-12">
-                                    <label>NPK</label>
-                                    <input type="text" class="form-control" name="npk" value="{{ $user->npk }}"
-                                        required="">
+                                    <label>Password</label>
+                                    <input type="text" class="form-control" name="password" placeholder="******************">
                                     <div class="invalid-feedback">
                                     </div>
                                 </div>
                                 <div class="form-group col-md-6 col-12">
-                                    <label>Password</label>
-                                    <input type="password" class="form-control" name="password"
+                                    <label>Password Confirmation</label>
+                                    <input type="password" class="form-control" name="password_confirmations"
                                         placeholder="******************">
                                 </div>
                             </div>

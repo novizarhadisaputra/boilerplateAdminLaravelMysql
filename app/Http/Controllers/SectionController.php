@@ -109,7 +109,7 @@ class SectionController extends Controller
             return \abort(404);
         }
         $validator = [];
-        foreach ($request->except(['_token', '_method']) as $key => $value) {
+        foreach ($request->except(['_token', '_method', 'department_id']) as $key => $value) {
             if ($request->input($key) != $section[$key]) {
                 $validator[$key] = 'required|unique:sections';
             }
