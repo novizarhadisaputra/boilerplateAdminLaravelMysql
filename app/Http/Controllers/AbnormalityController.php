@@ -49,7 +49,7 @@ class AbnormalityController extends Controller
 
     public function findAll($request)
     {
-        if (\auth()->user()->hasRole('user')) {
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
             $request->request->add(['user_id' => auth()->user()->id]);
         }
 
@@ -140,8 +140,10 @@ class AbnormalityController extends Controller
             return \abort(404);
         }
 
-        if ($abnormality->user_id !== auth()->user()->id) {
-            return abort(403);
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            if ($abnormality->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
         }
 
         $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
@@ -165,6 +167,12 @@ class AbnormalityController extends Controller
 
         if (!$abnormality) {
             return \abort(404);
+        }
+
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            if ($abnormality->status->name !== 'Draft') {
+                abort(403);
+            }
         }
 
         $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);

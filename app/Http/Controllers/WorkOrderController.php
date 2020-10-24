@@ -49,7 +49,7 @@ class WorkOrderController extends Controller
 
     public function findAll($request)
     {
-        if (\auth()->user()->hasRole('user')) {
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
             $request->request->add(['user_id' => auth()->user()->id]);
         }
 
@@ -171,7 +171,7 @@ class WorkOrderController extends Controller
         }
 
         if (!auth()->user()->hasRole(['super admin', 'admin'])) {
-            if ($workOrder->status->name != 'Draft') {
+            if ($workOrder->status->name !== 'Draft') {
                 return abort(403);
             }
         }
