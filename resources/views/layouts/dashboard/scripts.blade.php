@@ -31,7 +31,22 @@
     });
     var channel = pusher.subscribe('my-channel');
     channel.bind('notifications', function (data) {
-        alert(JSON.stringify(data));
+        var x = document.getElementById("myAudio");
+        x.play();
+        $.get(`{{route('notifications.index')}}`, {}, function (data) {
+            let itemHtml = `
+            <a href="${data.url}" class="dropdown-item dropdown-item-unread">
+                <div class="dropdown-item-icon bg-primary text-white">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="dropdown-item-desc">
+                    ${data.action}
+                    <div class="time text-primary">${data.updated_at ? data.updated_at : data.created_at}</div>
+                </div>
+            </a>`
+            $('.dropdown-list-content').html(itemHtml)
+        })
+
     });
 
     $(document).ready(function () {
@@ -41,12 +56,23 @@
         }
         if ($('#workOrderPie') || $('#abnormalityPie')) {
             getDataAbnormality();
+            getDataWorkOrder();
         }
+    });
+
+    $('#filterChartWorkOrder').change(function(e) {
+        e.preventDefault();
+        getDataWorkOrder($(this).val());
+    })
+
+    $('#filterChartAbnormality').change(function(e) {
+        e.preventDefault();
+        getDataAbnormality($(this).val());
     });
 
     $('#addFile').click(function (e) {
         e.preventDefault();
-        if ($('.custom-file-input').length === 3) {
+        if ($('.file-input').length === 3) {
             return Swal.fire({
                 title: 'Warning!',
                 text: 'File not allow more than 3 files!',
@@ -62,6 +88,48 @@
             </div>
         </div>`;
         $('#files').append(html);
+    });
+
+    $('#addAttachment').click(function (e) {
+        e.preventDefault();
+        if ($('.attachment').length === 3) {
+            return Swal.fire({
+                title: 'Warning!',
+                text: 'Attachment not allow more than 3 files!',
+                icon: 'error',
+                confirmButtonText: 'Close'
+            })
+        }
+        let html = `
+        <div class="form-group col-md-6">
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input attachment" id="customFile"
+                    accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
+                <label class="custom-file-label" for="customFile">Replace file</label>
+            </div>
+        </div>`;
+        $('#attachments').append(html);
+    });
+
+    $('#addAttachmentClosed').click(function (e) {
+        e.preventDefault();
+        if ($('.attachment-closed').length === 3) {
+            return Swal.fire({
+                title: 'Warning!',
+                text: 'Attachment not allow more than 3 files!',
+                icon: 'error',
+                confirmButtonText: 'Close'
+            })
+        }
+        let html = `
+        <div class="form-group col-md-6">
+            <div class="custom-file mb-3">
+                <input type="file" class="custom-file-input attachment-closed" id="customFile"
+                    accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
+                <label class="custom-file-label" for="customFile">Replace file</label>
+            </div>
+        </div>`;
+        $('#attachmentsClosed').append(html);
     });
 
     $('select[name="department_id"]').change(function (e) {
@@ -115,28 +183,45 @@
         });
     }
 
-    async function getDataWorkOrder(time = null, status = null, department = null) {
+    async function getDataWorkOrder(years = null, status = null, department = null) {
         let query = {
-            time: time,
+            years: years,
             status: status,
             department: department
         }
         $.get(`{{route('work-order.ajax.data')}}`, query, function (response) {
             if (response) {
-                console.log('response', response)
+                showPieChartWorkOrder(response);
             }
         });
     }
 
     async function showPieChartWorkOrder(data = null) {
+        $('#workOrderPie').remove();
+        $('#cardWorkOrderPie').html(`<canvas id="workOrderPie" height="182"></canvas>`)
+        let newData = [];
+        let newLabel = [];
+        let closed;
+        let outstanding;
+        if (data != null) {
+            let dataGroup = await groupBy(data, 'label');
+            console.log('data', data)
+            for (const key in dataGroup) {
+                if (dataGroup.hasOwnProperty(key)) {
+                    newLabel.push(key);
+                    newData.push(dataGroup[key].length)
+                }
+            }
+        }
+
         let ctx = document.getElementById('workOrderPie').getContext('2d');
         let myChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                labels: newLabel,
                 datasets: [{
                     label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
+                    data: newData,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -159,9 +244,9 @@
         });
     }
 
-    async function getDataAbnormality(time = null, status = null, department = null) {
+    async function getDataAbnormality(years = null, status = null, department = null) {
         let query = {
-            time: time,
+            years: years,
             status: status,
             department: department
         }
@@ -172,7 +257,8 @@
         });
     }
     async function showPieChartAbnormality(data = null) {
-        $('#abnormalityPie').empty();
+        $('#abnormalityPie').remove();
+        $('#cardAbnormalityPie').html(`<canvas id="abnormalityPie" height="182"></canvas>`)
         let newData = [];
         let newLabel = [];
         let closed;

@@ -44,23 +44,28 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('work-order/ajax/data','HomeController@ajaxDataWorkOrder')->name('work-order.ajax.data');
         Route::resource('abnormality', 'AbnormalityController');
         Route::get('abnormality/ajax/data','HomeController@ajaxDataAbnormality')->name('abnormality.ajax.data');
-        Route::get('abnormality/exports/excel', 'AbnormalityController@export')->name('abnormality.exports.excel')->middleware('role:super admin');
+        Route::get('abnormality/exports/excel', 'AbnormalityController@export')->name('abnormality.exports.excel')->middleware('role:super admin|admin');
         Route::post('abnormality/status/draft/{id}', 'AbnormalityController@draft')->name('abnormality.status.draft');
         Route::post('abnormality/status/open/{id}', 'AbnormalityController@open')->name('abnormality.status.open');
         Route::post('abnormality/status/approved/{id}', 'AbnormalityController@approved')->name('abnormality.status.approved');
         Route::post('abnormality/status/on_progress/{id}', 'AbnormalityController@on_progress')->name('abnormality.status.on_progress');
+        Route::post('abnormality/status/on_progress/{id}/attachment', 'AbnormalityController@attachmentProgress')->name('abnormality.attachment.on_progress');
         Route::post('abnormality/status/closed/{id}', 'AbnormalityController@closed')->name('abnormality.status.closed');
+        Route::post('abnormality/status/closed/{id}/attachment', 'AbnormalityController@attachmentClosed')->name('abnormality.attachment.closed');
 
-        Route::get('work-order/exports/excel', 'WorkOrderController@export')->name('work-order.exports.excel')->middleware('role:super admin');
+        Route::get('work-order/exports/excel', 'WorkOrderController@export')->name('work-order.exports.excel')->middleware('role:super admin|admin');
         Route::post('work-order/status/draft/{id}', 'WorkOrderController@draft')->name('work-order.status.draft');
         Route::post('work-order/status/open/{id}', 'WorkOrderController@open')->name('work-order.status.open');
         Route::post('work-order/status/approved/{id}', 'WorkOrderController@approved')->name('work-order.status.approved');
         Route::post('work-order/status/on_progress/{id}', 'WorkOrderController@on_progress')->name('work-order.status.on_progress');
+        Route::post('work-order/status/on_progress/{id}/attachment', 'WorkOrderController@attachmentProgress')->name('work-order.attachment.on_progress');
         Route::post('work-order/status/closed/{id}', 'WorkOrderController@closed')->name('work-order.status.closed');
+        Route::post('work-order/status/closed/{id}/attachment', 'WorkOrderController@attachmentClosed')->name('work-order.attachment.closed');
     });
 });
 
 Route::get('sections', 'SectionController@findAll')->name('sections.find');
+Route::resource('notifications', 'NotificationController');
 
 Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');

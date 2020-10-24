@@ -21,12 +21,19 @@ class UserController extends Controller
         $this->title = 'Management Users';
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
 
         $per_page = $request->per_page ?? 10;
-        $users = User::paginate($per_page);
+        $users = User::select();
+
+        if($request->filled('search')) {
+            foreach (['name', 'email', 'password', 'department_id', 'section_id', 'phone', 'username', 'npk'] as $key) {
+                $users = $users->orWhere($key, 'like', '%' . $request->search . '%');
+            }
+        }
+        $users = $users->paginate($per_page);
 
         return view('pages.users.index', \compact('users', 'notifications'));
     }

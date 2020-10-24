@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 class WorkOrder extends Model
 {
     use SoftDeletes;
-    protected $fillable = ['title', 'description', 'location', 'pic_name', 'user_id', 'status_id', 'category_id', 'operator', 'worked_at'];
+    protected $fillable = ['code', 'title', 'description', 'location', 'pic_name', 'user_id', 'status_id', 'category_id', 'operator', 'worked_at'];
     protected $dates = [
         'created_at',
         'updated_at',
@@ -22,6 +22,11 @@ class WorkOrder extends Model
     public function files()
     {
         return $this->morphMany(File::class, 'fileable');
+    }
+
+    public function attachments()
+    {
+        return $this->morphMany(Attachment::class, 'attachmentable');
     }
 
     public function category()
@@ -37,11 +42,6 @@ class WorkOrder extends Model
     public function status()
     {
         return $this->hasOne(StatusAbnormality::class, 'id', 'status_id');
-    }
-
-    public function attachments()
-    {
-        return $this->morphMany(Attachment::class, 'attachmentable');
     }
 
     public function logs()

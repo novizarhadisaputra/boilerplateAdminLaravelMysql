@@ -15,6 +15,7 @@ class CreateAbnormalitiesTable extends Migration
     {
         Schema::create('abnormalities', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->nullable();
             $table->foreignId('user_id')->constrained();
             $table->string('title');
             $table->text('description');

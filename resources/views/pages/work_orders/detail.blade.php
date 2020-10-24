@@ -9,7 +9,7 @@
 
     <div class="section-body">
         <div class="row">
-            <div class="col-lg-6 col-md-6 col-12 col-sm-12">
+            <div class="col-lg-4 col-md-4 col-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Operator Information</h4>
@@ -18,15 +18,61 @@
                         <ul class="list-unstyled list-unstyled-border">
                             <li class="media">
                                 <div class="media-body">
-                                    <div class="float-right text-primary">{{ $workOrder->worked_at ? $workOrder->worked_at : 'No schedule' }}</div>
+                                    <div class="float-right text-primary">
+                                        {{ $workOrder->worked_at ? $workOrder->worked_at : 'No schedule' }}</div>
                                     <div class="media-title">Operator Name</div>
-                                    <span class="text-small text-muted">{{ $workOrder->operator ? $workOrder->operator : 'No operator available' }}</span>
+                                    <span
+                                        class="text-small text-muted">{{ $workOrder->operator ? $workOrder->operator : 'No operator available' }}</span>
                                 </div>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
+            @if ($workOrder->status->name === 'On Progress' || $workOrder->status->name === 'Closed')
+            <div class="col-lg-4 col-md-4 col-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Attachment On Progress</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            @foreach ($progress as $item)
+                            <div class="form-group col-md-4">
+                                <div class="form-group">
+                                    <a href="{{ asset('files/'.$item->path) }}" target="_blank"
+                                        class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
+                                        {{ $loop->iteration }}</a>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+            @if($workOrder->status->name === 'Closed')
+            <div class="col-lg-4 col-md-4 col-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Attachment Closed</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            @foreach ($closed as $item)
+                            <div class="form-group col-md-4">
+                                <div class="form-group">
+                                    <a href="{{ asset('files/'.$item->path) }}" target="_blank"
+                                        class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
+                                        {{ $loop->iteration }}</a>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
         <div class="row">
             <div class="col-lg-6 col-md-6 col-12 col-sm-12">
@@ -82,15 +128,15 @@
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label for="category_id">Category</label>
-                                <input type="text" value="{{ $workOrder->category_id }}" class="form-control" id="category_id"
-                                    name="category_id">
+                                <input type="text" value="{{ $workOrder->category_id }}" class="form-control"
+                                    id="category_id" name="category_id">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label for="status_id">Status</label>
-                                <input type="text" value="{{ $workOrder->status->name }}" class="form-control" id="status_id"
-                                    name="status_id">
+                                <input type="text" value="{{ $workOrder->status->name }}" class="form-control"
+                                    id="status_id" name="status_id">
                             </div>
                         </div>
                     </div>
@@ -108,7 +154,8 @@
                         <ul class="list-unstyled list-unstyled-border">
                             @foreach ($workOrder->logs as $item)
                             <li class="media">
-                                <img class="mr-3 rounded-circle" src="{{ asset('assets/img/avatar/avatar-1.png') }}" alt="avatar" width="50">
+                                <img class="mr-3 rounded-circle" src="{{ asset('assets/img/avatar/avatar-1.png') }}"
+                                    alt="avatar" width="50">
                                 <div class="media-body">
                                     <div class="float-right text-primary">{{ $item->created_at }}</div>
                                     <div class="media-title">{{ $item->user->name }}</div>

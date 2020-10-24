@@ -21,14 +21,17 @@
             </div>
 
         </div>
-        <div class="modal fade modal-general" tabindex="-1" role="dialog" aria-labelledby=""
-            aria-hidden="true">
+        <div class="modal fade modal-general" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
 
                 </div>
             </div>
         </div>
+        <audio id="myAudio">
+            <source src="{{ asset('sounds/Notification.mp3') }}" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
     </div>
     @include('layouts.dashboard.scripts')
 </body>

@@ -10,7 +10,7 @@ class Abnormality extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['title', 'description', 'location', 'pic_name', 'user_id', 'status_id', 'operator', 'worked_at'];
+    protected $fillable = ['code', 'title', 'description', 'location', 'pic_name', 'user_id', 'status_id', 'operator', 'worked_at'];
     protected $dates = [
         'created_at',
         'updated_at',
@@ -23,6 +23,11 @@ class Abnormality extends Model
     public function files()
     {
         return $this->morphMany(File::class, 'fileable');
+    }
+
+    public function attachments()
+    {
+        return $this->morphMany(Attachment::class, 'attachmentable');
     }
 
     public function user()

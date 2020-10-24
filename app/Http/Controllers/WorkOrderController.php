@@ -66,7 +66,7 @@ class WorkOrderController extends Controller
     {
         $workOrders = $data;
         $workOrders = $request->user_id ? $workOrders->where(['user_id' => $request->user_id]) : $workOrders;
-        foreach (['title', 'description', 'location', 'pic_name', 'operator', 'worked_at'] as $key) {
+        foreach (['code', 'title', 'description', 'location', 'pic_name', 'operator', 'worked_at'] as $key) {
             $workOrders = $workOrders->orWhere($key, 'like', '%' . $request->search . '%');
         }
         return $workOrders;
@@ -100,8 +100,8 @@ class WorkOrderController extends Controller
             $status = StatusWorkOrder::where(['name' => 'Draft'])->first();
             $request->request->add(['user_id' => auth()->user()->id]);
             $request->request->add(['status_id' => $status->id]);
-
             $workOrder = WorkOrder::create($request->all());
+            $workOrder->update(['code' => 'WO/' . $workOrder->id . date('/Y/m/d')]);
 
             //Memanggil Event ModelWasCreated
             event(new ModelWasCreated($workOrder, 'The request work order just added'));
@@ -149,8 +149,9 @@ class WorkOrderController extends Controller
 
         $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
         $statusWorkOrders = StatusWorkOrder::all();
-
-        return view('pages.work_orders.detail', compact('workOrder', 'statusWorkOrders', 'notifications'));
+        $progress = $workOrder->attachments()->where(['status_type' => 'On Progress'])->get();
+        $closed = $workOrder->attachments()->where(['status_type' => 'Closed'])->get();
+        return view('pages.work_orders.detail', compact('workOrder', 'statusWorkOrders', 'notifications', 'progress', 'closed'));
     }
 
     /**
@@ -178,8 +179,10 @@ class WorkOrderController extends Controller
         $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
         $categories = Category::all();
         $statusWorkOrders = StatusWorkOrder::all();
+        $progress = $workOrder->attachments()->where(['status_type' => 'On Progress'])->get();
+        $closed = $workOrder->attachments()->where(['status_type' => 'Closed'])->get();
 
-        return \view('pages.work_orders.edit', compact('workOrder', 'statusWorkOrders', 'categories', 'notifications'));
+        return \view('pages.work_orders.edit', compact('progress', 'closed', 'workOrder', 'statusWorkOrders', 'categories', 'notifications'));
     }
 
     /**
@@ -221,20 +224,10 @@ class WorkOrderController extends Controller
         }
 
         try {
-            $status = StatusWorkOrder::where(['id' => $request->status_id])->first();
-            if ($workOrder->status_id !== $status->id) {
-                if ($status->name === 'Open' || $status->name === 'open' || $status->name === 'Closed' || $status->name === 'closed') {
-                    $workOrder->update($request->input());
-                    $workOrder->url = route('work-order.update', $workOrder->id);
-                    event(new SubmitRequestMail($workOrder, 'The request work order change status to ' . $status->name));
-                }
-                event(new ModelWasUpdated($workOrder, 'The request work order change status to ' . $status->name));
-            } else {
-                //Memanggil Event ModelWasUpdated
-                event(new ModelWasUpdated($workOrder, 'The request work order just updated'));
-                $workOrder->update($request->input());
-            }
+            //Memanggil Event ModelWasUpdated
+            event(new ModelWasUpdated($workOrder, 'The request work order just updated'));
             $workOrder->update($request->input());
+
             return redirect()->route('work-order.index')->with('success', 'Update Successfully');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
@@ -336,9 +329,7 @@ class WorkOrderController extends Controller
         $workOrder = WorkOrder::find($id);
         $status = StatusWorkOrder::where(['name' => 'On Progress'])->orWhere(['name' => 'on progress'])->first();
         if (!auth()->user()->hasRole(['super admin', 'admin'])) {
-            if ($workOrder->user_id !== auth()->user()->id) {
-                return abort(403);
-            }
+            return abort(403);
         }
 
         $workOrder->status_id = $status->id;
@@ -348,14 +339,31 @@ class WorkOrderController extends Controller
         return redirect()->route('work-order.index')->with('success', 'Update Successfully');
     }
 
+    public function attachmentProgress(Request $request, $id)
+    {
+        $workOrder = WorkOrder::find($id);
+
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            return abort(403);
+        }
+
+        foreach ($request->file('files') as $file) {
+            $name = Str::random(40) . '.' . $file->extension();
+            $path = date('Y/m/d/') . $name;
+            Storage::disk('local')->putFileAs('attachments', new File($file), $path);
+            $workOrder->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('files') . '/' . $path, 'status_type' => 'On Progress']);
+        }
+
+        event(new ModelWasUpdated($workOrder, 'The attachment work order On Progress'));
+        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+    }
+
     public function closed(Request $request, $id)
     {
         $workOrder = WorkOrder::find($id);
         $status = StatusWorkOrder::where(['name' => 'Closed'])->orWhere(['name' => 'closed'])->first();
         if (!auth()->user()->hasRole(['super admin', 'admin'])) {
-            if ($workOrder->user_id !== auth()->user()->id) {
-                return abort(403);
-            }
+            return abort(403);
         }
 
         $workOrder->status_id = $status->id;
@@ -366,6 +374,25 @@ class WorkOrderController extends Controller
         event(new SubmitRequestMail($workOrder, 'The request work order change status to ' . $status->name));
         event(new SendNotification($workOrder));
 
+        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+    }
+
+    public function attachmentClosed(Request $request, $id)
+    {
+        $workOrder = WorkOrder::find($id);
+
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            return abort(403);
+        }
+
+        foreach ($request->file('files') as $file) {
+            $name = Str::random(40) . '.' . $file->extension();
+            $path = date('Y/m/d/') . $name;
+            Storage::disk('local')->putFileAs('attachments', new File($file), $path);
+            $workOrder->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('files') . '/' . $path, 'status_type' => 'Closed']);
+        }
+
+        event(new ModelWasUpdated($workOrder, 'The attachment work order Closed'));
         return redirect()->route('work-order.index')->with('success', 'Update Successfully');
     }
 }

@@ -66,7 +66,7 @@ class AbnormalityController extends Controller
     {
         $abnormalities = $data;
         $abnormalities = $request->user_id ? $abnormalities->where(['user_id' => $request->user_id]) : $abnormalities;
-        foreach (['title', 'description', 'location', 'pic_name', 'operator', 'worked_at'] as $key) {
+        foreach (['code', 'title', 'description', 'location', 'pic_name', 'operator', 'worked_at'] as $key) {
             $abnormalities = $abnormalities->orWhere($key, 'like', '%' . $request->search . '%');
         }
         return $abnormalities;
@@ -99,8 +99,8 @@ class AbnormalityController extends Controller
             $status = StatusAbnormality::where(['name' => 'Draft'])->first();
             $request->request->add(['user_id' => auth()->user()->id]);
             $request->request->add(['status_id' => $status->id]);
-
             $abnormality = Abnormality::create($request->all());
+            $abnormality->update(['code' => 'ABN/' . $abnormality->id . date('/Y/m/d')]);
 
             //Memanggil Event ModelWasCreated
             event(new ModelWasCreated($abnormality, 'The request abnormality just added'));
@@ -145,8 +145,10 @@ class AbnormalityController extends Controller
         }
 
         $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
+        $progress = $abnormality->attachments()->where(['status_type' => 'On Progress'])->get();
+        $closed = $abnormality->attachments()->where(['status_type' => 'Closed'])->get();
 
-        return view('pages.abnormality.detail', compact('abnormality', 'notifications'));
+        return view('pages.abnormality.detail', compact('abnormality', 'closed', 'progress', 'notifications'));
     }
 
     /**
@@ -166,9 +168,11 @@ class AbnormalityController extends Controller
         }
 
         $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
-
         $status_abnormalities = StatusAbnormality::all();
-        return \view('pages.abnormality.edit', compact('abnormality', 'status_abnormalities', 'notifications'));
+        $progress = $abnormality->attachments()->where(['status_type' => 'On Progress'])->get();
+        $closed = $abnormality->attachments()->where(['status_type' => 'Closed'])->get();
+
+        return \view('pages.abnormality.edit', compact('abnormality', 'closed', 'progress', 'status_abnormalities', 'notifications'));
     }
 
     /**
@@ -343,6 +347,25 @@ class AbnormalityController extends Controller
         return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
     }
 
+    public function attachmentProgress(Request $request, $id)
+    {
+        $abnormality = Abnormality::find($id);
+
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            return abort(403);
+        }
+
+        foreach ($request->file('files') as $file) {
+            $name = Str::random(40) . '.' . $file->extension();
+            $path = date('Y/m/d/') . $name;
+            Storage::disk('local')->putFileAs('attachments', new File($file), $path);
+            $abnormality->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('files') . '/' . $path, 'status_type' => 'On Progress']);
+        }
+
+        event(new ModelWasUpdated($abnormality, 'The attachment abnormality On Progress'));
+        return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
+    }
+
     public function closed(Request $request, $id)
     {
         $abnormality = Abnormality::find($id);
@@ -351,9 +374,7 @@ class AbnormalityController extends Controller
 
         $status = StatusAbnormality::where(['name' => 'Closed'])->orWhere(['name' => 'closed'])->first();
         if (!auth()->user()->hasRole(['super admin', 'admin'])) {
-            if ($abnormality->user_id !== auth()->user()->id) {
-                return abort(403);
-            }
+            return abort(403);
         }
 
         $abnormality->status_id = $status->id;
@@ -365,6 +386,25 @@ class AbnormalityController extends Controller
         event(new SubmitRequestMail($abnormality, 'The request abnormality change status to ' . $status->name));
         event(new SendNotification($abnormality));
 
+        return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
+    }
+
+    public function attachmentClosed(Request $request, $id)
+    {
+        $abnormality = Abnormality::find($id);
+
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            return abort(403);
+        }
+
+        foreach ($request->file('files') as $file) {
+            $name = Str::random(40) . '.' . $file->extension();
+            $path = date('Y/m/d/') . $name;
+            Storage::disk('local')->putFileAs('attachments', new File($file), $path);
+            $abnormality->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('files') . '/' . $path, 'status_type' => 'Closed']);
+        }
+
+        event(new ModelWasUpdated($abnormality, 'The attachment abnormality Closed'));
         return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
     }
 }

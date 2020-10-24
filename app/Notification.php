@@ -10,7 +10,7 @@ class Notification extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['action', 'url'];
+    protected $fillable = ['action', 'url', 'is_read'];
 
     public function getCreatedAtAttribute($value)
     {

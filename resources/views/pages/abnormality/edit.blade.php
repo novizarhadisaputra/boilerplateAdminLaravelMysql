@@ -8,7 +8,7 @@
 
     <div class="section-body">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-lg-6 col-md-6 col-12 col-sm-12">
                 <div class="card">
                     <form method="POST" action="{{ route('abnormality.update', $abnormality->id) }}" enctype="multipart/form-data"
                         class="needs-validation" novalidate="">
@@ -44,9 +44,9 @@
 
                             </div>
                             <div class="form-row" id="files">
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-6">
                                     <div class="custom-file mb-3">
-                                        <input type="file" class="custom-file-input" id="customFile" accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
+                                        <input type="file" class="custom-file-input file-input" id="customFile" accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
                                         <label class="custom-file-label" for="customFile">Replace file</label>
                                     </div>
                                 </div>
@@ -86,12 +86,115 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-footer text-right">
-                            <button class="btn btn-primary">Submit</button>
+                            @if(!count($closed))
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <button type="submit" class="btn btn-primary float-right">Submit</button>
+                                </div>
+                            </div>
+                            @endif
                         </div>
                     </form>
                 </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-12 col-sm-12">
+                @if ($abnormality->status->name === 'On Progress' || $abnormality->status->name === 'Closed')
+                <div class="card form-group">
+                    <div class="card-header">
+                        <h4>Attachment On Progress</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate=""
+                            action="{{ route('abnormality.attachment.on_progress', $abnormality->id) }}">
+                            @csrf
+
+                            @if(!count($closed))
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <button class="btn btn-success" id="addAttachment">Add File</button>
+                                </div>
+                            </div>
+                            @endif
+                            <div class="form-row">
+                                @foreach ($progress as $item)
+                                <div class="form-group col-md-4">
+                                    <div class="form-group">
+                                        <a href="{{ asset('files/'.$item->path) }}" target="_blank"
+                                            class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
+                                            {{ $loop->iteration }}</a>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            @if(!count($closed))
+                            <div class="form-row" id="attachments">
+                                <div class="form-group col-md-6">
+                                    <div class="custom-file mb-3">
+                                        <input type="file" class="custom-file-input attachment" id="customFile"
+                                            accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]" required>
+                                        <label class="custom-file-label" for="customFile">Replace file</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <button type="submit" class="btn btn-primary float-right">Submit</button>
+                                </div>
+                            </div>
+                            @endif
+                        </form>
+                    </div>
+                </div>
+                @endif
+                @if($abnormality->status->name === 'Closed')
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Attachment Closed</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate=""
+                            action="{{ route('abnormality.attachment.closed', $abnormality->id) }}">
+                            @csrf
+
+                            @if(!count($closed))
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <button class="btn btn-success" id="addAttachmentClosed">Add File</button>
+                                </div>
+                            </div>
+                            @endif
+                            <div class="form-row">
+                                @foreach ($closed as $item)
+                                <div class="form-group col-md-4">
+                                    <div class="form-group">
+                                        <a href="{{ asset('files/'.$item->path) }}" target="_blank"
+                                            class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
+                                            {{ $loop->iteration }}</a>
+                                    </div>
+                                </div>
+                                @endforeach
+
+                            </div>
+                            @if(!count($closed))
+                            <div class="form-row" id="attachmentsClosed">
+                                <div class="form-group col-md-6">
+                                    <div class="custom-file mb-3">
+                                        <input type="file" class="custom-file-input attachment-closed" id="customFile"
+                                            accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
+                                        <label class="custom-file-label" for="customFile">Replace file</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <button type="submit" class="btn btn-primary float-right">Submit</button>
+                                </div>
+                            </div>
+                            @endif
+                        </form>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>

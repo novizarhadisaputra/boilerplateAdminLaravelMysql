@@ -11,6 +11,7 @@ use App\User;
 use App\WorkOrder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class HomeController extends Controller
 {
@@ -33,7 +34,8 @@ class HomeController extends Controller
     {
         $abnormalities = Abnormality::all();
         $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
-
+        $now = Carbon::now();
+        $current_year = $now->year;
         $total_users = User::whereHas('roles', function (Builder $query) {
             $query->whereNotIn('name', ['super admin', 'admin']);
         })->count();
@@ -47,11 +49,13 @@ class HomeController extends Controller
         $statusAbnormalities = StatusAbnormality::whereIn('name', ['Outstanding', 'Closed'])->get();
         $statusWorkOrders = StatusWorkOrder::whereIn('name', ['Outstanding', 'Closed'])->get();
 
-        return view('home', compact('total_users', 'total_abnormalities', 'total_work_orders', 'logs', 'statusAbnormalities', 'statusWorkOrders', 'notifications'));
+        return view('home', compact('current_year', 'total_users', 'total_abnormalities', 'total_work_orders', 'logs', 'statusAbnormalities', 'statusWorkOrders', 'notifications'));
     }
 
     public function ajaxDataAbnormality(Request $request)
     {
+        $now = Carbon::now();
+
         $abnormalities = Abnormality::select();
         // Filter by Status
         if ($request->filled('status_abnormality')) {
@@ -63,16 +67,23 @@ class HomeController extends Controller
         // Filter by Department
         if ($request->filled('department')) {
             $department = $request->department;
-            $abnormalities = $abnormalities - whereHas('user', function ($query) use ($department) {
+            $abnormalities = $abnormalities->whereHas('user', function ($query) use ($department) {
                 $query->where('department_id', $department);
             });
         }
+        if ($request->filled('years')) {
+            $abnormalities = $abnormalities->whereRaw('YEAR(created_at) = ?', [$request->years]);
+        } else {
+            $abnormalities = $abnormalities->whereRaw('YEAR(created_at) <= ? AND YEAR(created_at)', [$now->year, ($now->year - 4)]);
+        }
+
         $abnormalities = $abnormalities->get();
         return $abnormalities;
     }
 
     public function ajaxDataWorkOrder(Request $request)
     {
+        $now = Carbon::now();
         $workOrders = WorkOrder::select();
         // Filter by Status
         if ($request->filled('status_abnormality')) {
@@ -84,10 +95,17 @@ class HomeController extends Controller
         // Filter by Department
         if ($request->filled('department')) {
             $department = $request->department;
-            $workOrders = $workOrders - whereHas('user', function ($query) use ($department) {
+            $workOrders = $workOrders->whereHas('user', function ($query) use ($department) {
                 $query->where('department_id', $department);
             });
         }
+
+        if ($request->filled('years')) {
+            $workOrders = $workOrders->whereRaw('YEAR(created_at) = ?', [$request->years]);
+        } else {
+            $workOrders = $workOrders->whereRaw('YEAR(created_at) <= ? AND YEAR(created_at)', [$now->year, ($now->year - 4)]);
+        }
+
         $workOrders = $workOrders->get();
         return $workOrders;
     }

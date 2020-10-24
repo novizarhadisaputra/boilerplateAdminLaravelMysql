@@ -28,8 +28,7 @@ class WorkOrderUpdate extends FormRequest
             'description' => 'required',
             'location' => 'required',
             'pic_name' => 'required',
-            'status_id' => 'required',
-            'category_id' => 'required'
+            'category_id' => 'required',
         ];
     }
 
@@ -40,8 +39,7 @@ class WorkOrderUpdate extends FormRequest
             'description.required' => 'Field description is required',
             'location.required' => 'Field location is required',
             'pic_name.required' => 'Field PIC Name is required',
-            'status_id.required' => 'Field status is required',
-            'category_id.required' => 'Field category is required'
+            'category_id.required' => 'Field category is required',
         ];
     }
 }

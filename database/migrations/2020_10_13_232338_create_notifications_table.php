@@ -17,6 +17,7 @@ class CreateNotificationsTable extends Migration
             $table->id();
             $table->string('action');
             $table->string('url');
+            $table->boolean('is_read')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

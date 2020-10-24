@@ -9,7 +9,7 @@
 
     <div class="section-body">
         <div class="row">
-            <div class="col-lg-6 col-md-6 col-12 col-sm-12">
+            <div class="col-lg-4 col-md-4 col-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Operator Information</h4>
@@ -27,6 +27,50 @@
                     </div>
                 </div>
             </div>
+            @if ($abnormality->status->name === 'On Progress' || $abnormality->status->name === 'Closed')
+            <div class="col-lg-4 col-md-4 col-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Attachment On Progress</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            @foreach ($progress as $item)
+                            <div class="form-group col-md-4">
+                                <div class="form-group">
+                                    <a href="{{ asset('files/'.$item->path) }}" target="_blank"
+                                        class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
+                                        {{ $loop->iteration }}</a>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+            @if($abnormality->status->name === 'Closed')
+            <div class="col-lg-4 col-md-4 col-12 col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Attachment Closed</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            @foreach ($closed as $item)
+                            <div class="form-group col-md-4">
+                                <div class="form-group">
+                                    <a href="{{ asset('files/'.$item->path) }}" target="_blank"
+                                        class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
+                                        {{ $loop->iteration }}</a>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
         <div class="row">
             <div class="col-lg-6 col-md-6 col-12 col-sm-12">

@@ -9,10 +9,15 @@ class Attachment extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'ext', 'original' ,'path'];
+    protected $fillable = ['name', 'ext', 'original' ,'path', 'status_type'];
     protected $dates = [
         'created_at',
         'updated_at',
         'deleted_at'
     ];
+
+    public function attachmentable()
+    {
+        return $this->morphTo();
+    }
 }

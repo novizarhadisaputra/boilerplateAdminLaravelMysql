@@ -76,14 +76,15 @@
                     <div class="card-header">
                         <h4>Abnormalities</h4>
                         <div class="card-header-action">
-                            <select name="filterChart" class="custom-select" id="filterChart">
-                               @foreach ($statusWorkOrders as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                               @endforeach
+                            <select name="filterChart" class="custom-select" id="filterChartAbnormality">
+                               @for ($i = 0; $i < 5; $i++)
+                               <option value="{{ $current_year - $i }}">{{ ($current_year - $i) }}</option>
+
+                               @endfor
                             </select>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="cardAbnormalityPie">
                         <canvas id="abnormalityPie" height="182"></canvas>
                     </div>
                 </div>
@@ -93,14 +94,14 @@
                     <div class="card-header">
                         <h4>Work Orders</h4>
                         <div class="card-header-action">
-                            <select name="filterChart" class="custom-select" id="filterChart">
-                               @foreach ($statusAbnormalities as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                               @endforeach
+                            <select name="filterChart" class="custom-select" id="filterChartWorkOrder">
+                                @for ($i = 0; $i < 5; $i++)
+                                <option value="{{ $current_year - $i }}">{{ ($current_year - $i) }}</option>
+                                @endfor
                             </select>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="cardWorkOrderPie">
                         <canvas id="workOrderPie" height="182"></canvas>
                     </div>
                 </div>

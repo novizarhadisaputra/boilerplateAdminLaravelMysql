@@ -23,6 +23,16 @@
                 </div>
             </div>
             <div class="card-body">
+                <div class="float-right form-group">
+                    <form action="{{ route('users.index') }}">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="search" placeholder="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-striped" id="table-1">
                         <thead>
@@ -39,7 +49,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($users as $item)
+                            @forelse ($users as $item)
                             <tr>
                                 <td>
                                     {{ $loop->iteration }}
@@ -63,7 +73,13 @@
                                     </a>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="7" class="text-center font-weight-bold">
+                                    Data is Empty
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
