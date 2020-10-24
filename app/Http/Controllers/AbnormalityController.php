@@ -359,7 +359,7 @@ class AbnormalityController extends Controller
             $name = Str::random(40) . '.' . $file->extension();
             $path = date('Y/m/d/') . $name;
             Storage::disk('local')->putFileAs('attachments', new File($file), $path);
-            $abnormality->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('files') . '/' . $path, 'status_type' => 'On Progress']);
+            $abnormality->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('attachments') . '/' . $path, 'status_type' => 'On Progress']);
         }
 
         event(new ModelWasUpdated($abnormality, 'The attachment abnormality On Progress'));
@@ -401,7 +401,7 @@ class AbnormalityController extends Controller
             $name = Str::random(40) . '.' . $file->extension();
             $path = date('Y/m/d/') . $name;
             Storage::disk('local')->putFileAs('attachments', new File($file), $path);
-            $abnormality->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('files') . '/' . $path, 'status_type' => 'Closed']);
+            $abnormality->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('attachments') . '/' . $path, 'status_type' => 'Closed']);
         }
 
         event(new ModelWasUpdated($abnormality, 'The attachment abnormality Closed'));

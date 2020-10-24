@@ -351,7 +351,7 @@ class WorkOrderController extends Controller
             $name = Str::random(40) . '.' . $file->extension();
             $path = date('Y/m/d/') . $name;
             Storage::disk('local')->putFileAs('attachments', new File($file), $path);
-            $workOrder->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('files') . '/' . $path, 'status_type' => 'On Progress']);
+            $workOrder->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('attachments') . '/' . $path, 'status_type' => 'On Progress']);
         }
 
         event(new ModelWasUpdated($workOrder, 'The attachment work order On Progress'));
@@ -389,7 +389,7 @@ class WorkOrderController extends Controller
             $name = Str::random(40) . '.' . $file->extension();
             $path = date('Y/m/d/') . $name;
             Storage::disk('local')->putFileAs('attachments', new File($file), $path);
-            $workOrder->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('files') . '/' . $path, 'status_type' => 'Closed']);
+            $workOrder->attachments()->create(['name' => $name, 'ext' => $file->extension(), 'path' => $path, 'original' => public_path('attachments') . '/' . $path, 'status_type' => 'Closed']);
         }
 
         event(new ModelWasUpdated($workOrder, 'The attachment work order Closed'));
