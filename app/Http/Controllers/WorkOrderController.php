@@ -395,4 +395,44 @@ class WorkOrderController extends Controller
         event(new ModelWasUpdated($workOrder, 'The attachment work order Closed'));
         return redirect()->route('work-order.index')->with('success', 'Update Successfully');
     }
+
+    public function removeFile($id, $idFile = null)
+    {
+        $workOrder = WorkOrder::find($id);
+        if (!$workOrder) {
+            return abort(404);
+        }
+
+        if ($idFile) {
+            $file = $workOrder->files()->where(['id' => $idFile])->first();
+            unlink(asset('files/' . $file->path));
+            $workOrder->files()->where(['id' => $idFile])->delete();
+        } else {
+            foreach ($workOrder->attachments as $value) {
+                unlink(asset('files/' . $value->path));
+            }
+            $workOrder->files()->delete();
+        }
+        return redirect()->route('work-order.index')->with('success', 'Delete Successfully');
+    }
+
+    public function removeAttachment($id, $idFile = null)
+    {
+        $workOrder = WorkOrder::find($id);
+        if (!$workOrder) {
+            return abort(404);
+        }
+
+        if ($idFile) {
+            $attachment = $workOrder->attachments()->where(['id' => $idFile])->first();
+            unlink(asset('attachments/' . $attachment->path));
+            $workOrder->attachments()->where(['id' => $idFile])->delete();
+        } else {
+            foreach ($workOrder->attachments as $value) {
+                unlink(asset('attachments/' . $value->path));
+            }
+            $workOrder->attachments()->delete();
+        }
+        return redirect()->route('work-order.index')->with('success', 'Delete Successfully');
+    }
 }

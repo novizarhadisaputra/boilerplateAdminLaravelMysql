@@ -23,8 +23,8 @@
                     <li class="{{ request()->is('master-data/permissions') || request()->is('master-data/permissions/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('permissions.index') }}>Permissions</a></li>
                     <li class="{{ request()->is('master-data/departments') || request()->is('master-data/departments/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('departments.index') }}>Departments</a></li>
                     <li class="{{ request()->is('master-data/sections') || request()->is('master-data/sections/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('sections.index') }}>Sections</a></li>
-                    <li class="{{ request()->is('master-data/status-work-order') || request()->is('master-data/status-work-order/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('status-work-order.index') }}>Status Work Order</a></li>
-                    <li class="{{ request()->is('master-data/status-abnormality') || request()->is('master-data/status-abnormality/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('status-abnormality.index') }}>Status Abnormality</a></li>
+                    {{-- <li class="{{ request()->is('master-data/status-work-order') || request()->is('master-data/status-work-order/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('status-work-order.index') }}>Status Work Order</a></li> --}}
+                    {{-- <li class="{{ request()->is('master-data/status-abnormality') || request()->is('master-data/status-abnormality/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('status-abnormality.index') }}>Status Abnormality</a></li> --}}
                     <li class="{{ request()->is('master-data/categories') || request()->is('master-data/categories/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('categories.index') }}>Categories</a></li>
                 </ul>
             </li>

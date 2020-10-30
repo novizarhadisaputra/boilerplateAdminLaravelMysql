@@ -130,10 +130,10 @@ class UserController extends Controller
     public function update(UserUpdate $request, User $user)
     {
         $validated = $request->validated();
-
         if (!$user) {
             return \abort(404);
         }
+        $request->request->remove('password');
 
         $validator = [];
         foreach ($request->except(['_token', '_method', 'roles']) as $key => $value) {
@@ -144,6 +144,7 @@ class UserController extends Controller
 
         if ($request->filled('password')) {
             $validator['password'] = 'required|confirmed';
+            $request->request->add(['password' => $request->password]);
         }
 
         $validator = Validator::make($request->all(), $validator);
@@ -153,7 +154,7 @@ class UserController extends Controller
 
         try {
             $user->syncRoles($request->roles);
-            $user->update($request->input());
+            $user->update();
             return redirect()->route('users.index')->with('success', 'Update Successfully');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());

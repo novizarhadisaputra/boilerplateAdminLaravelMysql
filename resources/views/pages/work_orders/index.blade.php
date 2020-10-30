@@ -35,15 +35,15 @@
                         </div>
                     </form>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive text-nowrap">
                     <table class="table table-striped" id="table-1">
                         <thead>
                             <tr>
                                 <th width="5%" class="text-center">
                                     #
                                 </th>
+                                <th width="25%">Code</th>
                                 <th width="25%">Title</th>
-                                <th>User</th>
                                 <th width="10%">Status</th>
                                 <th width="10%">Created At</th>
                                 <th width="20%">Action</th>
@@ -56,8 +56,9 @@
                                 <td>
                                     {{($workOrders->currentPage() - 1) * $workOrders->perPage() + $loop->iteration}}
                                 </td>
+                                {{-- <td> {{ $item->user->name }} </td> --}}
+                                <td> {{ $item->code }} </td>
                                 <td> {{ $item->title }} </td>
-                                <td> {{ $item->user->name }} </td>
                                 <td><a class="btn btn-sm btn-primary" href="#">{{ $item->status->name }}</a></td>
                                 <td> {{ $item->created_at }} </td>
                                 <td>

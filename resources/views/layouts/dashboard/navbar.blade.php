@@ -6,14 +6,15 @@
 
     </form>
     <ul class="navbar-nav navbar-right">
+        @if (auth()->user()->hasRole(['super admin', 'admin']))
         <li class="dropdown dropdown-list-toggle"><a href="#" data-toggle="dropdown"
                 class="nav-link notification-toggle nav-link-lg beep" aria-expanded="false"><i
                     class="far fa-bell"></i></a>
             <div class="dropdown-menu dropdown-list dropdown-menu-right">
                 <div class="dropdown-header">Notifications
                     {{-- <div class="float-right">
-                        <a href="#">Mark All As Read</a>
-                    </div> --}}
+                    <a href="#">Mark All As Read</a>
+                </div> --}}
                 </div>
                 <div class="dropdown-list-content dropdown-list-icons"
                     style="overflow: hidden; outline: currentcolor none medium; touch-action: none;" tabindex="3">
@@ -32,8 +33,8 @@
 
                 </div>
                 {{-- <div class="dropdown-footer text-center">
-                    <a href="#">View All <i class="fas fa-chevron-right"></i></a>
-                </div> --}}
+                <a href="#">View All <i class="fas fa-chevron-right"></i></a>
+            </div> --}}
                 <div id="ascrail2002" class="nicescroll-rails nicescroll-rails-vr"
                     style="width: 9px; z-index: 1000; cursor: default; position: absolute; top: 58px; left: 341px; height: 350px; touch-action: none; opacity: 0.3; display: none;">
                     <div style="position: relative; top: 0px; float: right; width: 7px; height: 307px; background-color: rgb(66, 66, 66); border: 1px solid rgb(255, 255, 255); background-clip: padding-box; border-radius: 5px; touch-action: none;"
@@ -46,6 +47,8 @@
                 </div>
             </div>
         </li>
+
+        @endif
         <li class="dropdown"><a href="#" data-toggle="dropdown"
                 class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                 <img alt="image" src="{{ asset('assets/img/avatar/avatar-1.png') }}" class="rounded-circle mr-1">

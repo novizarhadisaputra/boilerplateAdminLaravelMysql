@@ -61,7 +61,7 @@ class Abnormality extends Model
 
     public function getWorkedAtAttribute($value)
     {
-        return Carbon::parse($value)->format('d M Y');
+        if($value !== null) return Carbon::parse($value)->format('d M Y');
     }
 
     public function getStatusBeforeAttribute($value)

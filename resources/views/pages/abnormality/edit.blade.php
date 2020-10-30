@@ -47,7 +47,7 @@
                                 <div class="form-group col-md-6">
                                     <div class="custom-file mb-3">
                                         <input type="file" class="custom-file-input file-input" id="customFile" accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
-                                        <label class="custom-file-label" for="customFile">Replace file</label>
+                                        <label class="custom-file-label" for="customFile">Choose file</label>
                                     </div>
                                 </div>
                             </div>
@@ -132,7 +132,7 @@
                                     <div class="custom-file mb-3">
                                         <input type="file" class="custom-file-input attachment" id="customFile"
                                             accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]" required>
-                                        <label class="custom-file-label" for="customFile">Replace file</label>
+                                        <label class="custom-file-label" for="customFile">Choose file</label>
                                     </div>
                                 </div>
                             </div>
@@ -181,7 +181,7 @@
                                     <div class="custom-file mb-3">
                                         <input type="file" class="custom-file-input attachment-closed" id="customFile"
                                             accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
-                                        <label class="custom-file-label" for="customFile">Replace file</label>
+                                        <label class="custom-file-label" for="customFile">Choose file</label>
                                     </div>
                                 </div>
                             </div>

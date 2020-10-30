@@ -21,14 +21,20 @@ class RoleSeeder extends Seeder
         $allPermissions = Permission::all()->pluck('name');
         $superadmin->syncPermissions($allPermissions);
 
-        Role::create([
+        $admin = Role::create([
             'name' => 'admin',
             'guard_name' => 'web'
         ]);
+        $admin->syncPermissions($allPermissions);
 
-        Role::create([
+        $user = Role::create([
             'name' => 'user',
             'guard_name' => 'web'
         ]);
+        $userPermissions = collect($allPermissions)->filter(function ($value, $key) {
+            return strpos($value, 'abnormality') !== false || strpos($value, 'work orders') !== false || strpos($value, 'request menu') !== false;
+        });
+        $user->syncPermissions($userPermissions);
+
     }
 }

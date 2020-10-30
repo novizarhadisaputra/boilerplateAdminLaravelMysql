@@ -24,10 +24,9 @@
                 <div class="col-lg-4 col-md-6 col-12 order-lg-1 min-vh-100 order-2 bg-white">
                     <div class="p-4 m-3" style="padding-top:30% !important">
                         <div class="form-group">
-                            <h1 class="text-center">Dashboard System</h1>
+                            <h1 class="text-center">GASS</h1>
                         </div>
-                        <p class="text-muted">Before you get started, you must login or register if you don't already
-                            have an account.</p>
+                        <p class="text-muted text-center">General Affair Service Support</p>
                         <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate="">
                             @csrf
                             @if (Session::has('errors'))

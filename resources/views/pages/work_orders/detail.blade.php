@@ -19,10 +19,10 @@
                             <li class="media">
                                 <div class="media-body">
                                     <div class="float-right text-primary">
-                                        {{ $workOrder->worked_at ? $workOrder->worked_at : 'No schedule' }}</div>
-                                    <div class="media-title">Operator Name</div>
+                                        {{ $workOrder->worked_at ?? 'No schedule' }}</div>
+                                    <div class="media-title">{{ $workOrder->operator ?? 'No operator available' }}</div>
                                     <span
-                                        class="text-small text-muted">{{ $workOrder->operator ? $workOrder->operator : 'No operator available' }}</span>
+                                        class="text-small text-muted">As Opeator</span>
                                 </div>
                             </li>
                         </ul>
