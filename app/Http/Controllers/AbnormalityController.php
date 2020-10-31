@@ -202,15 +202,7 @@ class AbnormalityController extends Controller
 
         if ($request->hasfile('files')) {
 
-            foreach ($abnormality->files as $tmp) {
-                Storage::delete('files/' . $tmp->path);
-                $abnormality->files()->where(['id' => $tmp->id])->delete();
-            }
-            $validator = Validator::make($request->all(), [
-                'files' => 'required',
-                'files.*' => 'mimes:png,jpeg,jpg,pdf']);
-
-            if (count($request->file('files')) > 3) {
+            if ((count($request->file('files')) + count($abnormality->files)) > 3) {
                 redirect()->back()->withErrors(['erros' => ['File not allow more than 3 files!']]);
             }
 
@@ -414,5 +406,45 @@ class AbnormalityController extends Controller
 
         event(new ModelWasUpdated($abnormality, 'The attachment abnormality Closed'));
         return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
+    }
+
+    public function removeFile($id, $idFile = null)
+    {
+        $abnormality = Abnormality::find($id);
+        if (!$abnormality) {
+            return abort(404);
+        }
+
+        if ($idFile) {
+            $file = $abnormality->files()->where(['id' => $idFile])->first();
+            Storage::delete('files/' . $file->path);
+            $abnormality->files()->where(['id' => $idFile])->delete();
+        } else {
+            foreach ($abnormality->attachments as $value) {
+                Storage::delete('files/' . $value->path);
+            }
+            $abnormality->files()->delete();
+        }
+        return redirect()->back()->with('success', 'Delete file successfully');
+    }
+
+    public function removeAttachment($id, $idFile = null)
+    {
+        $abnormality = Abnormality::find($id);
+        if (!$abnormality) {
+            return abort(404);
+        }
+
+        if ($idFile) {
+            $attachment = $abnormality->attachments()->where(['id' => $idFile])->first();
+            Storage::delete('attachments/' . $attachment->path);
+            $abnormality->attachments()->where(['id' => $idFile])->delete();
+        } else {
+            foreach ($abnormality->attachments as $value) {
+                Storage::delete('attachments/' . $value->path);
+            }
+            $abnormality->attachments()->delete();
+        }
+        return redirect()->route('work-order.index')->with('success', 'Delete Successfully');
     }
 }

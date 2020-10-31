@@ -61,6 +61,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('work-order/status/on_progress/{id}/attachment', 'WorkOrderController@attachmentProgress')->name('work-order.attachment.on_progress');
         Route::post('work-order/status/closed/{id}', 'WorkOrderController@closed')->name('work-order.status.closed');
         Route::post('work-order/status/closed/{id}/attachment', 'WorkOrderController@attachmentClosed')->name('work-order.attachment.closed');
+
+        Route::delete('work-order/file/{id}/{idFile}/remove', 'WorkOrderController@removeFile')->name('work-order.file.remove');
+
     });
 });
 

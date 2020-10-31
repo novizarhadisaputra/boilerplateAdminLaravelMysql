@@ -141,4 +141,9 @@ class Abnormality extends Model
             }
         }
     }
+
+    public function reviews()
+    {
+        return $this->morphMany(Review::class, 'reviewable')->orderBy('created_at', 'desc');
+    }
 }

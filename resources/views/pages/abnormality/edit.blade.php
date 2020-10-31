@@ -10,8 +10,8 @@
         <div class="row">
             <div class="col-lg-6 col-md-6 col-12 col-sm-12">
                 <div class="card">
-                    <form method="POST" action="{{ route('abnormality.update', $abnormality->id) }}" enctype="multipart/form-data"
-                        class="needs-validation" novalidate="">
+                    <form method="POST" action="{{ route('abnormality.update', $abnormality->id) }}"
+                        enctype="multipart/form-data" class="needs-validation" novalidate="">
                         @csrf
                         @method('PUT')
                         <div class="card-header">
@@ -37,43 +37,64 @@
                                 @foreach ($abnormality->files as $item)
                                 <div class="form-group col-md-4">
                                     <div class="form-group">
-                                        <a href="{{ asset('files/'.$item->path) }}" target="_blank" class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }} {{ $loop->iteration }}</a>
+                                        <a href="{{ asset('files/'.$item->path) }}" target="_blank"
+                                            class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
+                                            {{ $loop->iteration }}
+                                        </a><a
+                                        href="{{ route('abnormality.file.remove', ['id' => $abnormality->id, 'idFile' => $item->id]) }}"
+                                        data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}}
+                                        data-identity={{ $item->id }} data-toggle="modal"
+                                        data-wording="Are you sure delete File {{ strtoupper($item->ext) .' '.$loop->iteration }}"
+                                        data-title="Remove File" class="btn btn-sm btn-danger btn-modal">
+                                        x
+                                    </a>
                                     </div>
                                 </div>
                                 @endforeach
 
                             </div>
                             <div class="form-row" id="files">
-                                <div class="form-group col-md-6">
-                                    <div class="custom-file mb-3">
-                                        <input type="file" class="custom-file-input file-input" id="customFile" accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
-                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                <div class="form-group col-md">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <button class="input-group-text btn-danger btn-remove-file"
+                                                id="inputGroupFileAddon">x</button>
+                                        </div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input file-input" name="files[]"
+                                                id="inputGroupFile" aria-describedby="inputGroupFileAddon">
+                                            <label class="custom-file-label" for="inputGroupFile">Choose file</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <label for="title">Title</label>
-                                    <input type="text" value="{{ $abnormality->title }}" class="form-control" id="title" name="title">
+                                    <input type="text" value="{{ $abnormality->title }}" class="form-control" id="title"
+                                        name="title">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <label for="description">Description</label>
-                                    <textarea type="text" class="form-control" name="description" id="description">{{ $abnormality->description }}</textarea>
+                                    <textarea type="text" class="form-control" name="description"
+                                        id="description">{{ $abnormality->description }}</textarea>
                                 </div>
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <label for="location">Location</label>
-                                    <input type="text" value="{{ $abnormality->location }}" class="form-control" id="location" name="location">
+                                    <input type="text" value="{{ $abnormality->location }}" class="form-control"
+                                        id="location" name="location">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <label for="pic_name">PIC Name</label>
-                                    <input type="text" value="{{ $abnormality->pic_name }}" class="form-control" id="pic_name" name="pic_name">
+                                    <input type="text" value="{{ $abnormality->pic_name }}" class="form-control"
+                                        id="pic_name" name="pic_name">
                                 </div>
                             </div>
                             <div class="form-row">
@@ -81,7 +102,9 @@
                                     <label for="pic_name">Status</label>
                                     <select name="status_id" class="custom-select" id="">
                                         @foreach ($status_abnormalities as $item)
-                                        <option value="{{ $item->id }}" {{ $item->id === $abnormality->status_id ? 'selected': '' }}>{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}"
+                                            {{ $item->id === $abnormality->status_id ? 'selected': '' }}>
+                                            {{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -131,7 +154,8 @@
                                 <div class="form-group col-md-6">
                                     <div class="custom-file mb-3">
                                         <input type="file" class="custom-file-input attachment" id="customFile"
-                                            accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]" required>
+                                            accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]"
+                                            required>
                                         <label class="custom-file-label" for="customFile">Choose file</label>
                                     </div>
                                 </div>

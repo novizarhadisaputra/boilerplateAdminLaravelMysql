@@ -56,7 +56,9 @@ class HomeController extends Controller
     {
         $now = Carbon::now();
 
-        $abnormalities = Abnormality::select();
+        $abnormalities = Abnormality::select()->whereHas('status', function (Builder $query) {
+            $query->where([['name', '<>', 'Draft']]);
+        });
         // Filter by Status
         if ($request->filled('status_abnormality')) {
             $condition = $request->status_abnormality === 'Closed' ? ['name', '=', 'Closed'] : ['name', '<>', 'Closed'];
@@ -84,7 +86,9 @@ class HomeController extends Controller
     public function ajaxDataWorkOrder(Request $request)
     {
         $now = Carbon::now();
-        $workOrders = WorkOrder::select();
+        $workOrders = WorkOrder::select()->whereHas('status', function (Builder $query) {
+            $query->where([['name', '<>', 'Draft']]);
+        });
         // Filter by Status
         if ($request->filled('status_abnormality')) {
             $condition = $request->status_abnormality === 'Closed' ? ['name', '=', 'Closed'] : ['name', '<>', 'Closed'];

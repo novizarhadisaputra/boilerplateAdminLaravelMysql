@@ -31,10 +31,16 @@
                         </div>
                     </div>
                     <div class="form-row" id="files">
-                        <div class="form-group col-md-4">
-                            <div class="custom-file mb-3">
-                                <input type="file" class="custom-file-input" id="customFile" accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
-                                <label class="custom-file-label" for="customFile">Choose file</label>
+                        <div class="form-group col-md">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <button class="input-group-text btn-danger btn-remove-file" id="inputGroupFileAddon">x</button>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input file-input" name="files[]" id="inputGroupFile"
+                                        aria-describedby="inputGroupFileAddon">
+                                    <label class="custom-file-label" for="inputGroupFile">Choose file</label>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -23,27 +23,26 @@
 <script src="{{ asset('assets/js/scripts.js') }}"></script>
 <script src="{{ asset('assets/js/custom.js') }}"></script>
 @if (auth()->user()->hasRole(['super admin', 'admin']))
-    @include('layouts.dashboard.notification')
+@include('layouts.dashboard.notification')
 @endif
 <script>
-
     $(document).ready(function () {
         if ($('select[name="department_id"]').val()) {
             let department_id = $('select[name="department_id"]').val();
             showSections(department_id);
         }
-        if ($('#workOrderPie') || $('#abnormalityPie')) {
+        if (document.getElementById('#workOrderPie') || document.getElementById('#abnormalityPie')) {
             getDataAbnormality();
             getDataWorkOrder();
         }
     });
 
-    $('#filterChartWorkOrder').change(function(e) {
+    $('#filterChartWorkOrder').change(function (e) {
         e.preventDefault();
         getDataWorkOrder($(this).val());
     })
 
-    $('#filterChartAbnormality').change(function(e) {
+    $('#filterChartAbnormality').change(function (e) {
         e.preventDefault();
         getDataAbnormality($(this).val());
     });
@@ -59,13 +58,27 @@
             })
         }
         let html = `
-        <div class="form-group col-md-4">
-            <div class="custom-file mb-3">
-                <input type="file" class="custom-file-input" name="files[]">
-                <label class="custom-file-label" for="customFile">Choose file</label>
+        <div class="form-group col-md">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <button class="input-group-text btn-danger btn-remove-file" id="inputGroupFileAddon${$('.file-input').length + 1}">x</button>
+                </div>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input file-input" name="files[]" id="inputGroupFile${$('.file-input').length + 1}"
+                        aria-describedby="inputGroupFileAddon${$('.file-input').length + 1}">
+                    <label class="custom-file-label" for="inputGroupFile${$('.file-input').length + 1}">Choose file</label>
+                </div>
             </div>
         </div>`;
         $('#files').append(html);
+    });
+
+    $(document).on('click', '.btn-remove-file', function (e) {
+        e.preventDefault();
+        let btnGroup = $(this).attr('id').split('inputGroupFileAddon');
+        console.log('object',  $(`label[for="inputGroupFile${btnGroup[1]}"]`).val());
+        $(`#inputGroupFile${btnGroup[1]}`).val('');
+        $(`label[for="inputGroupFile${btnGroup[1]}"]`).text('Choose file');
     });
 
     $('#addAttachment').click(function (e) {

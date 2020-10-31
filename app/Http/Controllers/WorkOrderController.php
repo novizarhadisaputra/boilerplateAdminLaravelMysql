@@ -203,15 +203,8 @@ class WorkOrderController extends Controller
         }
 
         if ($request->hasfile('files')) {
-            foreach ($workOrder->files as $tmp) {
-                Storage::delete('files/' . $tmp->path);
-                $workOrder->files()->where(['id' => $tmp->id])->delete();
-            }
-            $validator = Validator::make($request->all(), [
-                'files' => 'required',
-                'files.*' => 'mimes:png,jpeg,jpg,pdf']);
 
-            if (count($request->file('files')) > 3) {
+            if ((count($request->file('files')) + count($workOrder->files)) > 3) {
                 redirect()->back()->withErrors(['erros' => ['File not allow more than 3 files!']]);
             }
 
@@ -405,15 +398,15 @@ class WorkOrderController extends Controller
 
         if ($idFile) {
             $file = $workOrder->files()->where(['id' => $idFile])->first();
-            unlink(asset('files/' . $file->path));
+            Storage::delete('files/' . $file->path);
             $workOrder->files()->where(['id' => $idFile])->delete();
         } else {
             foreach ($workOrder->attachments as $value) {
-                unlink(asset('files/' . $value->path));
+                Storage::delete('files/' . $value->path);
             }
             $workOrder->files()->delete();
         }
-        return redirect()->route('work-order.index')->with('success', 'Delete Successfully');
+        return redirect()->back()->with('success', 'Delete file successfully');
     }
 
     public function removeAttachment($id, $idFile = null)
@@ -425,11 +418,11 @@ class WorkOrderController extends Controller
 
         if ($idFile) {
             $attachment = $workOrder->attachments()->where(['id' => $idFile])->first();
-            unlink(asset('attachments/' . $attachment->path));
+            Storage::delete('attachments/' . $attachment->path);
             $workOrder->attachments()->where(['id' => $idFile])->delete();
         } else {
             foreach ($workOrder->attachments as $value) {
-                unlink(asset('attachments/' . $value->path));
+                Storage::delete('attachments/' . $value->path);
             }
             $workOrder->attachments()->delete();
         }
