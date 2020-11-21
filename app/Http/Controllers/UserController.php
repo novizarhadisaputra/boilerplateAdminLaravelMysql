@@ -154,7 +154,7 @@ class UserController extends Controller
 
         try {
             $user->syncRoles($request->roles);
-            $user->update();
+            $user->update($request->input());
             return redirect()->route('users.index')->with('success', 'Update Successfully');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());

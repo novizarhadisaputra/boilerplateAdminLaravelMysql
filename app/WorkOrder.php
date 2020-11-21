@@ -113,6 +113,16 @@ class WorkOrder extends Model
             } else if ($this->status_id == 4) {
                 return 'closed';
             }
+        } else {
+            if ($this->status_id == 1) {
+                return 'open';
+            } else if ($this->status_id == 2) {
+                return null;
+            } else if ($this->status_id == 3) {
+                return null;
+            } else if ($this->status_id == 4) {
+                return null;
+            }
         }
     }
 

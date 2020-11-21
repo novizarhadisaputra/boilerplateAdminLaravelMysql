@@ -15,7 +15,7 @@ class Abnormality extends Model
         'created_at',
         'updated_at',
         'deleted_at',
-        'worked_at'
+        'worked_at',
     ];
 
     protected $appends = array('label');
@@ -61,7 +61,10 @@ class Abnormality extends Model
 
     public function getWorkedAtAttribute($value)
     {
-        if($value !== null) return Carbon::parse($value)->format('d M Y');
+        if ($value !== null) {
+            return Carbon::parse($value)->format('d M Y');
+        }
+
     }
 
     public function getStatusBeforeAttribute($value)
@@ -113,6 +116,16 @@ class Abnormality extends Model
                 return 'on_progress';
             } else if ($this->status_id == 4) {
                 return 'closed';
+            }
+        } else {
+            if ($this->status_id == 1) {
+                return 'open';
+            } else if ($this->status_id == 2) {
+                return null;
+            } else if ($this->status_id == 3) {
+                return null;
+            } else if ($this->status_id == 4) {
+                return null;
             }
         }
     }

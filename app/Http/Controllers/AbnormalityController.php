@@ -33,6 +33,7 @@ class AbnormalityController extends Controller
         $data = $this->findAll($request);
         $data = $request->filled('search') ? $this->search($request, $data) : $data;
         $abnormalities = $data->paginate($per_page);
+
         return view('pages.abnormality.index', \compact('abnormalities', 'notifications'));
     }
 

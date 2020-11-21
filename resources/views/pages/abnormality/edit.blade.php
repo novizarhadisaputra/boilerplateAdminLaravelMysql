@@ -28,31 +28,34 @@
                             </div>
                             @endforeach
                             @endif
+                            @if (!count($closed))
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <button class="btn btn-success" id="addFile">Add File</button>
                                 </div>
                             </div>
+                            @endif
                             <div class="form-row">
                                 @foreach ($abnormality->files as $item)
                                 <div class="form-group col-md-4">
                                     <div class="form-group">
                                         <a href="{{ asset('files/'.$item->path) }}" target="_blank"
-                                            class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
+                                            class="btn btn-sm btn-secondary">File {{ strtoupper($item->ext) }}
                                             {{ $loop->iteration }}
                                         </a><a
-                                        href="{{ route('abnormality.file.remove', ['id' => $abnormality->id, 'idFile' => $item->id]) }}"
-                                        data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}}
-                                        data-identity={{ $item->id }} data-toggle="modal"
-                                        data-wording="Are you sure delete File {{ strtoupper($item->ext) .' '.$loop->iteration }}"
-                                        data-title="Remove File" class="btn btn-sm btn-danger btn-modal">
-                                        x
-                                    </a>
+                                            href="{{ route('abnormality.file.remove', ['id' => $abnormality->id, 'idFile' => $item->id]) }}"
+                                            data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}}
+                                            data-identity={{ $item->id }} data-toggle="modal"
+                                            data-wording="Are you sure delete File {{ strtoupper($item->ext) .' '.$loop->iteration }}"
+                                            data-title="Remove File" class="btn btn-sm btn-danger btn-modal">
+                                            x
+                                        </a>
                                     </div>
                                 </div>
                                 @endforeach
 
                             </div>
+                            @if (!count($closed))
                             <div class="form-row" id="files">
                                 <div class="form-group col-md">
                                     <div class="input-group mb-3">
@@ -68,6 +71,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <label for="title">Title</label>
@@ -95,18 +99,6 @@
                                     <label for="pic_name">PIC Name</label>
                                     <input type="text" value="{{ $abnormality->pic_name }}" class="form-control"
                                         id="pic_name" name="pic_name">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-12">
-                                    <label for="pic_name">Status</label>
-                                    <select name="status_id" class="custom-select" id="">
-                                        @foreach ($status_abnormalities as $item)
-                                        <option value="{{ $item->id }}"
-                                            {{ $item->id === $abnormality->status_id ? 'selected': '' }}>
-                                            {{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
                                 </div>
                             </div>
                             @if(!count($closed))
@@ -143,8 +135,16 @@
                                 <div class="form-group col-md-4">
                                     <div class="form-group">
                                         <a href="{{ asset('attachments/'.$item->path) }}" target="_blank"
-                                            class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
-                                            {{ $loop->iteration }}</a>
+                                            class="btn btn-sm btn-secondary">File {{ strtoupper($item->ext) }}
+                                            {{ $loop->iteration }}
+                                        </a><a
+                                            href="{{ route('abnormality.attachment.remove', ['id' => $abnormality->id, 'idAttachment' => $item->id]) }}"
+                                            data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}}
+                                            data-identity={{ $item->id }} data-toggle="modal"
+                                            data-wording="Are you sure delete File {{ strtoupper($item->ext) .' '.$loop->iteration }}"
+                                            data-title="Remove File" class="btn btn-sm btn-danger btn-modal">
+                                            x
+                                        </a>
                                     </div>
                                 </div>
                                 @endforeach
@@ -156,7 +156,7 @@
                                         <input type="file" class="custom-file-input attachment" id="customFile"
                                             accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]"
                                             required>
-                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                        <label class="custom-file-label" for="customFile">Choose File</label>
                                     </div>
                                 </div>
                             </div>
@@ -192,8 +192,16 @@
                                 <div class="form-group col-md-4">
                                     <div class="form-group">
                                         <a href="{{ asset('attachments/'.$item->path) }}" target="_blank"
-                                            class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
-                                            {{ $loop->iteration }}</a>
+                                            class="btn btn-sm btn-secondary">File {{ strtoupper($item->ext) }}
+                                            {{ $loop->iteration }}
+                                        </a><a
+                                            href="{{ route('abnormality.attachment.remove', ['id' => $abnormality->id, 'idAttachment' => $item->id]) }}"
+                                            data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}}
+                                            data-identity={{ $item->id }} data-toggle="modal"
+                                            data-wording="Are you sure delete File {{ strtoupper($item->ext) .' '.$loop->iteration }}"
+                                            data-title="Remove File" class="btn btn-sm btn-danger btn-modal">
+                                            x
+                                        </a>
                                     </div>
                                 </div>
                                 @endforeach
@@ -205,7 +213,7 @@
                                     <div class="custom-file mb-3">
                                         <input type="file" class="custom-file-input attachment-closed" id="customFile"
                                             accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
-                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                        <label class="custom-file-label" for="customFile">Choose File</label>
                                     </div>
                                 </div>
                             </div>

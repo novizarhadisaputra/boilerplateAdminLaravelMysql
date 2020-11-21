@@ -60,11 +60,12 @@
                                 <div class="form-group col-md">
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <button class="input-group-text btn-danger btn-remove-file" id="inputGroupFileAddon">x</button>
+                                            <button class="input-group-text btn-danger btn-remove-file"
+                                                id="inputGroupFileAddon">x</button>
                                         </div>
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input file-input" name="files[]" id="inputGroupFile"
-                                                aria-describedby="inputGroupFileAddon">
+                                            <input type="file" class="custom-file-input file-input" name="files[]"
+                                                id="inputGroupFile" aria-describedby="inputGroupFileAddon">
                                             <label class="custom-file-label" for="inputGroupFile">Choose file</label>
                                         </div>
                                     </div>
@@ -145,8 +146,16 @@
                                 <div class="form-group col-md-4">
                                     <div class="form-group">
                                         <a href="{{ asset('attachments/'.$item->path) }}" target="_blank"
-                                            class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
-                                            {{ $loop->iteration }}</a>
+                                            class="btn btn-sm btn-secondary">File {{ strtoupper($item->ext) }}
+                                            {{ $loop->iteration }}
+                                        </a><a
+                                            href="{{ route('work-order.attachment.remove', ['id' => $workOrder->id, 'idAttachment' => $item->id]) }}"
+                                            data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}}
+                                            data-identity={{ $item->id }} data-toggle="modal"
+                                            data-wording="Are you sure delete File {{ strtoupper($item->ext) .' '.$loop->iteration }}"
+                                            data-title="Remove File" class="btn btn-sm btn-danger btn-modal">
+                                            x
+                                        </a>
                                     </div>
                                 </div>
                                 @endforeach
@@ -194,8 +203,16 @@
                                 <div class="form-group col-md-4">
                                     <div class="form-group">
                                         <a href="{{ asset('attachments/'.$item->path) }}" target="_blank"
-                                            class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
-                                            {{ $loop->iteration }}</a>
+                                            class="btn btn-sm btn-secondary">File {{ strtoupper($item->ext) }}
+                                            {{ $loop->iteration }}
+                                        </a><a
+                                            href="{{ route('work-order.attachment.remove', ['id' => $workOrder->id, 'idAttachment' => $item->id]) }}"
+                                            data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}}
+                                            data-identity={{ $item->id }} data-toggle="modal"
+                                            data-wording="Are you sure delete File {{ strtoupper($item->ext) .' '.$loop->iteration }}"
+                                            data-title="Remove File" class="btn btn-sm btn-danger btn-modal">
+                                            x
+                                        </a>
                                     </div>
                                 </div>
                                 @endforeach
@@ -224,6 +241,5 @@
             </div>
         </div>
     </div>
-
 </section>
 @endsection

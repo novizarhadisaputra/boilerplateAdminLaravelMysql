@@ -56,7 +56,6 @@
                             <textarea type="text" class="form-control" name="description" id="description"></textarea>
                         </div>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group col-md-12">
                             <label for="location">Location</label>

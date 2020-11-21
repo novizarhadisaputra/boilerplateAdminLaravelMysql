@@ -18,9 +18,11 @@
                         <ul class="list-unstyled list-unstyled-border">
                             <li class="media">
                                 <div class="media-body">
-                                    <div class="float-right text-primary">{{ $abnormality->work_at ? $abnormality->work_at : 'No schedule' }}</div>
-                                    <div class="media-title">Operator Name</div>
-                                    <span class="text-small text-muted">{{ $abnormality->operator ? $abnormality->operator : 'No operator available' }}</span>
+                                    <div class="float-right text-primary">
+                                        {{ $abnormality->worked_at ?? 'No schedule' }}</div>
+                                    <div class="media-title">{{ $abnormality->operator ?? 'No operator available' }}</div>
+                                    <span
+                                        class="text-small text-muted">As Opeator</span>
                                 </div>
                             </li>
                         </ul>
@@ -78,23 +80,17 @@
                     <div class="card-header">
                         <h4>Detail Abnormality</h4>
                         <div class="card-header-action">
-                            <a href="{{ route('abnormality.index') }}" class="btn btn-info">List Abnormalities</a>
+                            <a href="{{ route('work-order.index') }}" class="btn btn-info">List Abnormalities</a>
                         </div>
                     </div>
                     <div class="card-body">
-                        @if (Session::has('errors'))
-                        @foreach ($errors->all() as $err)
-                        <div class="alert alert-danger">
-                            {{$err}}
-                        </div>
-                        @endforeach
-                        @endif
-                        <div class="form-row" id="files">
+                        <div class="form-row">
                             @foreach ($abnormality->files as $item)
                             <div class="form-group col-md-4">
                                 <div class="form-group">
-                                    <a href="{{ asset('files/'.$item->path) }}" target="_blank" class="btn btn-sm btn-primary">File
-                                        {{ strtoupper($item->ext) }} {{ $loop->iteration }}</a>
+                                    <a href="{{ asset('files/'.$item->path) }}" target="_blank"
+                                        class="btn btn-sm btn-primary">File {{ strtoupper($item->ext) }}
+                                        {{ $loop->iteration }}</a>
                                 </div>
                             </div>
                             @endforeach
@@ -118,15 +114,22 @@
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label for="location">Location</label>
-                                <input type="text" value="{{ $abnormality->location }}" class="form-control"
-                                    id="location" name="location">
+                                <input type="text" value="{{ $abnormality->location }}" class="form-control" id="location"
+                                    name="location">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label for="pic_name">PIC Name</label>
-                                <input type="text" value="{{ $abnormality->pic_name }}" class="form-control"
-                                    id="pic_name" name="pic_name">
+                                <input type="text" value="{{ $abnormality->pic_name }}" class="form-control" id="pic_name"
+                                    name="pic_name">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="status_id">Status</label>
+                                <input type="text" value="{{ $abnormality->status->name }}" class="form-control"
+                                    id="status_id" name="status_id">
                             </div>
                         </div>
                     </div>
@@ -144,7 +147,8 @@
                         <ul class="list-unstyled list-unstyled-border">
                             @foreach ($abnormality->logs as $item)
                             <li class="media">
-                                <img class="mr-3 rounded-circle" src="{{ asset('assets/img/avatar/avatar-1.png') }}" alt="avatar" width="50">
+                                <img class="mr-3 rounded-circle" src="{{ asset('assets/img/avatar/avatar-1.png') }}"
+                                    alt="avatar" width="50">
                                 <div class="media-body">
                                     <div class="float-right text-primary">{{ $item->created_at }}</div>
                                     <div class="media-title">{{ $item->user->name }}</div>

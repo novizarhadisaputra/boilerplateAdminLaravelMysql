@@ -94,7 +94,7 @@
                                     @endcan
                                 </td>
                                 <td>
-                                    @if ($item->status_before != '' && $item->status_before != null && $item->status->name != 'Closed')
+                                    @if (auth()->user()->hasRole(['super admin', 'admin']) && $item->status_before != '' && $item->status_before != null && $item->status->name != 'Closed')
 
                                     <a href="{{ route('work-order.status.'. $item->status_before, $item->id) }}"
                                         data-button-label="Update" data-method="POST" data-csrf={{csrf_token()}}
