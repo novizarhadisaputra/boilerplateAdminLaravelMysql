@@ -216,20 +216,10 @@ class AbnormalityController extends Controller
         }
 
         try {
-            $status = StatusAbnormality::where(['id' => $request->status_id])->first();
-            if ($abnormality->status_id !== $status->id) {
-                if ($status->name === 'Open' || $status->name === 'open' || $status->name === 'Closed' || $status->name === 'closed') {
-                    $abnormality->update($request->input());
-                    $abnormality->url = route('abnormality.update', $abnormality->id);
-                    event(new SubmitRequestMail($abnormality, 'The request abnormality change status to ' . $status->name));
-                    event(new SendNotification($abnormality));
-                }
-                event(new ModelWasUpdated($abnormality, 'The request abnormality change status to ' . $status->name));
-            } else {
-                //Memanggil Event ModelWasUpdated
-                event(new ModelWasUpdated($abnormality, 'The request abnormality just updated'));
-                $abnormality->update($request->input());
-            }
+            //Memanggil Event ModelWasUpdated
+            event(new ModelWasUpdated($abnormality, 'The request abnormality just updated'));
+            $abnormality->update($request->input());
+
             return redirect()->route('abnormality.index')->with('success', 'Update Successfully');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
@@ -318,9 +308,12 @@ class AbnormalityController extends Controller
     {
         $abnormality = Abnormality::find($id);
         $status = StatusAbnormality::where(['name' => 'Approved'])->orWhere(['name' => 'approved'])->first();
-        if ($abnormality->user_id !== auth()->user()->id) {
-            return abort(403);
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            if ($abnormality->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
         }
+
 
         $abnormality->status_id = $status->id;
         $abnormality->operator = $request->operator;
@@ -336,9 +329,12 @@ class AbnormalityController extends Controller
     {
         $abnormality = Abnormality::find($id);
         $status = StatusAbnormality::where(['name' => 'On Progress'])->orWhere(['name' => 'on_progress'])->first();
-        if ($abnormality->user_id !== auth()->user()->id) {
-            return abort(403);
+        if (!auth()->user()->hasRole(['super admin', 'admin'])) {
+            if ($abnormality->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
         }
+
 
         $abnormality->status_id = $status->id;
         $abnormality->save();
@@ -375,8 +371,11 @@ class AbnormalityController extends Controller
 
         $status = StatusAbnormality::where(['name' => 'Closed'])->orWhere(['name' => 'closed'])->first();
         if (!auth()->user()->hasRole(['super admin', 'admin'])) {
-            return abort(403);
+            if ($abnormality->user_id !== auth()->user()->id) {
+                return abort(403);
+            }
         }
+
 
         $abnormality->status_id = $status->id;
         $abnormality->save();

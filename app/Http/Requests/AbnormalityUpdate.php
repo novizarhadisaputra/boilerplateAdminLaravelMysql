@@ -28,7 +28,6 @@ class AbnormalityUpdate extends FormRequest
             'description' => 'required',
             'location' => 'required',
             'pic_name' => 'required',
-            'status_id' => 'required'
         ];
     }
 
