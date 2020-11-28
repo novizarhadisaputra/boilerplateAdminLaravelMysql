@@ -2,9 +2,127 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoryStore;
+use App\Notification;
+use App\SafetyPatrolCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class SafetyPatrolCategoryController extends Controller
 {
-    //
+    public function __construct()
+    {
+        $this->title = 'Categories';
+    }
+
+    public function index()
+    {
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
+
+        $per_page = $request->per_page ?? 10;
+        $categories = SafetyPatrolCategory::paginate($per_page);
+        return view('pages.safety_patrol_categories.index', \compact('categories' , 'notifications'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
+
+        return view('pages.safety_patrol_categories.create', compact('notifications'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(CategoryStore $request)
+    {
+        $validated = $request->validated();
+        try {
+            $category = SafetyPatrolCategory::create($request->all());
+            return redirect()->route('categories.index')->with('success', 'Add Successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Category  $category
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Category $category)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Category  $category
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Category $category)
+    {
+        $notifications = Notification::orderBy('created_at', 'desc')->paginate(10);
+
+        if (!$category) {
+            return \abort(404);
+        }
+
+        return \view('pages.safety_patrol_categories.edit', compact('category', 'notifications'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Category  $category
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Category $category)
+    {
+        if (!$category) {
+            return \abort(404);
+        }
+        $validator = [];
+        foreach ($request->except(['_token', '_method']) as $key => $value) {
+            if ($request->input($key) != $category[$key]) {
+                $validator[$key] = 'required|unique:categories';
+            }
+        }
+        $validator = Validator::make($request->all(), $validator);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        }
+        try {
+            $category->update($request->input());
+            return redirect()->route('categories.index')->with('success', 'Update Successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
+    }
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Category  $category
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Category $category)
+    {
+        if (!$category) {
+            return \abort(404);
+        }
+        $category->delete();
+        return redirect()->route('categories.index')->with('success', 'Delete Successfully');
+    }
 }
+

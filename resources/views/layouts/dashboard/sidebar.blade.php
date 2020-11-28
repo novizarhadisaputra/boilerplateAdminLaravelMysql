@@ -26,6 +26,7 @@
                     {{-- <li class="{{ request()->is('master-data/status-work-order') || request()->is('master-data/status-work-order/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('status-work-order.index') }}>Status Work Order</a></li> --}}
                     {{-- <li class="{{ request()->is('master-data/status-abnormality') || request()->is('master-data/status-abnormality/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('status-abnormality.index') }}>Status Abnormality</a></li> --}}
                     <li class="{{ request()->is('master-data/categories') || request()->is('master-data/categories/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('categories.index') }}>Categories</a></li>
+                    <li class="{{ request()->is('master-data/safety-patrol-categories') || request()->is('master-data/safety-patrol-categories/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('categories.index') }}>Safety Patrol Categories</a></li>
                 </ul>
             </li>
             @endcan

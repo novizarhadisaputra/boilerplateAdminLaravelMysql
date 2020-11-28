@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('departments', 'DepartmentController');
         Route::resource('sections', 'SectionController');
         Route::resource('categories', 'CategoryController');
+        Route::resource('safety-patrol-categories', 'SafetyPatrolCategoryController');
         Route::resource('status-work-order', 'StatusWorkOrderController');
         Route::resource('status-abnormality', 'StatusAbnormalityController');
     });
