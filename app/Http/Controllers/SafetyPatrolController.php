@@ -169,7 +169,7 @@ class SafetyPatrolController extends Controller
             return \abort(404);
         }
 
-        if (!auth()->user()->hasRole(['user'])) {
+        if (auth()->user()->hasRole(['user'])) {
             if ($safetyPatrol->status->name !== 'Draft') {
                 return abort(403);
             }
@@ -264,7 +264,7 @@ class SafetyPatrolController extends Controller
     {
         $safetyPatrol = SafetyPatrol::find($id);
         $status = StatusWorkOrder::where(['name' => 'Draft'])->orWhere(['name' => 'draft'])->first();
-        if (!auth()->user()->hasRole(['user'])) {
+        if (auth()->user()->hasRole(['user'])) {
             if ($safetyPatrol->user_id !== auth()->user()->id) {
                 return abort(403);
             }
@@ -281,7 +281,7 @@ class SafetyPatrolController extends Controller
     {
         $safetyPatrol = SafetyPatrol::find($id);
         $status = StatusWorkOrder::where(['name' => 'Open'])->orWhere(['name' => 'open'])->first();
-        if (!auth()->user()->hasRole(['user'])) {
+        if (auth()->user()->hasRole(['user'])) {
             if ($safetyPatrol->user_id !== auth()->user()->id) {
                 return abort(403);
             }
@@ -301,7 +301,7 @@ class SafetyPatrolController extends Controller
     {
         $safetyPatrol = SafetyPatrol::find($id);
         $status = StatusWorkOrder::where(['name' => 'Approved'])->orWhere(['name' => 'approved'])->first();
-        if (!auth()->user()->hasRole(['user'])) {
+        if (auth()->user()->hasRole(['user'])) {
             if ($safetyPatrol->user_id !== auth()->user()->id) {
                 return abort(403);
             }
@@ -320,7 +320,7 @@ class SafetyPatrolController extends Controller
     {
         $safetyPatrol = SafetyPatrol::find($id);
         $status = StatusWorkOrder::where(['name' => 'On Progress'])->orWhere(['name' => 'on progress'])->first();
-        if (!auth()->user()->hasRole(['user'])) {
+        if (auth()->user()->hasRole(['user'])) {
             return abort(403);
         }
 
@@ -335,7 +335,7 @@ class SafetyPatrolController extends Controller
     {
         $safetyPatrol = SafetyPatrol::find($id);
 
-        if (!auth()->user()->hasRole(['user'])) {
+        if (auth()->user()->hasRole(['user'])) {
             return abort(403);
         }
 
@@ -373,7 +373,7 @@ class SafetyPatrolController extends Controller
     {
         $safetyPatrol = SafetyPatrol::find($id);
 
-        if (!auth()->user()->hasRole(['user'])) {
+        if (auth()->user()->hasRole(['user'])) {
             return abort(403);
         }
 
