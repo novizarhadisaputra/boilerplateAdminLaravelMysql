@@ -3,7 +3,7 @@
 @section('content')
 <section class="section">
     <div class="section-header">
-        <h1>Work Orders</h1>
+        <h1>Safety Patrols</h1>
     </div>
 
 
@@ -78,9 +78,9 @@
             <div class="col-lg-6 col-md-6 col-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Detail Work Order</h4>
+                        <h4>Detail Safety Patrol</h4>
                         <div class="card-header-action">
-                            <a href="{{ route('work-order.index') }}" class="btn btn-info">List Work Orders</a>
+                            <a href="{{ route('work-order.index') }}" class="btn btn-info">List Safety Patrols</a>
                         </div>
                     </div>
                     <div class="card-body">

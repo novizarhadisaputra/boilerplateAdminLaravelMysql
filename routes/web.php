@@ -43,8 +43,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('work-order/ajax/data', 'HomeController@ajaxDataWorkOrder')->name('work-order.ajax.data');
         Route::resource('abnormality', 'AbnormalityController');
         Route::get('abnormality/ajax/data', 'HomeController@ajaxDataAbnormality')->name('abnormality.ajax.data');
-        Route::resource('safety-patrol', 'WorkOrderController');
-        Route::get('safety-patrol/ajax/data', 'HomeController@ajaxDataWorkOrder')->name('safety-patrol.ajax.data');
+        Route::resource('safety-patrol', 'SafetyPatrolController');
+        Route::get('safety-patrol/ajax/data', 'HomeController@ajaxDataSafetyPatrol')->name('safety-patrol.ajax.data');
 
         Route::get('abnormality/exports/excel', 'AbnormalityController@export')->name('abnormality.exports.excel')->middleware('role:super admin|admin');
         Route::post('abnormality/status/draft/{id}', 'AbnormalityController@draft')->name('abnormality.status.draft');

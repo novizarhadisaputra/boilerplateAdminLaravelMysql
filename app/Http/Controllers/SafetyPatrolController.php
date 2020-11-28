@@ -100,7 +100,7 @@ class SafetyPatrolController extends Controller
             $request->request->add(['user_id' => auth()->user()->id]);
             $request->request->add(['status_id' => $status->id]);
             $safetyPatrol = SafetyPatrol::create($request->all());
-            $safetyPatrol->update(['code' => 'WO/' . $safetyPatrol->id . date('/Y/m/d')]);
+            $safetyPatrol->update(['code' => 'SFP/' . $safetyPatrol->id . date('/Y/m/d')]);
 
             //Memanggil Event ModelWasCreated
             event(new ModelWasCreated($safetyPatrol, 'The request safety patrol just added'));
@@ -122,7 +122,7 @@ class SafetyPatrolController extends Controller
                 }
             }
 
-            return redirect()->route('work-order.index')->with('success', 'Add Successfully');
+            return redirect()->route('safety-patrol.index')->with('success', 'Add Successfully');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
         }
@@ -220,7 +220,7 @@ class SafetyPatrolController extends Controller
             event(new ModelWasUpdated($safetyPatrol, 'The request safety patrol just updated'));
             $safetyPatrol->update($request->input());
 
-            return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+            return redirect()->route('safety-patrol.index')->with('success', 'Update Successfully');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
         }
@@ -247,7 +247,7 @@ class SafetyPatrolController extends Controller
             event(new ModelWasDeleted($safetyPatrol, 'The request safety patrol just deleted'));
 
             $safetyPatrol->delete();
-            return redirect()->route('work-order.index')->with('success', 'Delete Successfully');
+            return redirect()->route('safety-patrol.index')->with('success', 'Delete Successfully');
 
         } catch (\Exception $e) {
             return redirect()->back()->withErrors($e->getMessage());
@@ -274,7 +274,7 @@ class SafetyPatrolController extends Controller
         $safetyPatrol->save();
 
         event(new ModelWasUpdated($safetyPatrol, 'The request safety patrol change status to ' . $status->name));
-        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+        return redirect()->route('safety-patrol.index')->with('success', 'Update Successfully');
     }
 
     public function open(Request $request, $id)
@@ -291,10 +291,10 @@ class SafetyPatrolController extends Controller
         $safetyPatrol->save();
 
         event(new ModelWasUpdated($safetyPatrol, 'The request safety patrol change status to ' . $status->name));
-        $safetyPatrol->url = route('work-order.update', $safetyPatrol->id);
+        $safetyPatrol->url = route('safety-patrol.update', $safetyPatrol->id);
         event(new SubmitRequestMail($safetyPatrol, 'The request safety patrol change status to ' . $status->name));
         event(new SendNotification($safetyPatrol));
-        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+        return redirect()->route('safety-patrol.index')->with('success', 'Update Successfully');
     }
 
     public function approved(Request $request, $id)
@@ -313,7 +313,7 @@ class SafetyPatrolController extends Controller
         $safetyPatrol->save();
 
         event(new ModelWasUpdated($safetyPatrol, 'The request safety patrol change status to ' . $status->name));
-        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+        return redirect()->route('safety-patrol.index')->with('success', 'Update Successfully');
     }
 
     public function on_progress(Request $request, $id)
@@ -328,7 +328,7 @@ class SafetyPatrolController extends Controller
         $safetyPatrol->save();
 
         event(new ModelWasUpdated($safetyPatrol, 'The request safety patrol change status to ' . $status->name));
-        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+        return redirect()->route('safety-patrol.index')->with('success', 'Update Successfully');
     }
 
     public function attachmentProgress(Request $request, $id)
@@ -347,7 +347,7 @@ class SafetyPatrolController extends Controller
         }
 
         event(new ModelWasUpdated($safetyPatrol, 'The attachment work order On Progress'));
-        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+        return redirect()->route('safety-patrol.index')->with('success', 'Update Successfully');
     }
 
     public function closed(Request $request, $id)
@@ -362,11 +362,11 @@ class SafetyPatrolController extends Controller
         $safetyPatrol->save();
 
         event(new ModelWasUpdated($safetyPatrol, 'The request safety patrol change status to ' . $status->name));
-        $safetyPatrol->url = route('work-order.update', $safetyPatrol->id);
+        $safetyPatrol->url = route('safety-patrol.update', $safetyPatrol->id);
         event(new SubmitRequestMail($safetyPatrol, 'The request safety patrol change status to ' . $status->name));
         event(new SendNotification($safetyPatrol));
 
-        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+        return redirect()->route('safety-patrol.index')->with('success', 'Update Successfully');
     }
 
     public function attachmentClosed(Request $request, $id)
@@ -385,7 +385,7 @@ class SafetyPatrolController extends Controller
         }
 
         event(new ModelWasUpdated($safetyPatrol, 'The attachment work order Closed'));
-        return redirect()->route('work-order.index')->with('success', 'Update Successfully');
+        return redirect()->route('safety-patrol.index')->with('success', 'Update Successfully');
     }
 
     public function removeFile($id, $idFile = null)
@@ -425,6 +425,6 @@ class SafetyPatrolController extends Controller
             }
             $safetyPatrol->attachments()->delete();
         }
-        return redirect()->route('work-order.index')->with('success', 'Delete Successfully');
+        return redirect()->route('safety-patrol.index')->with('success', 'Delete Successfully');
     }
 }

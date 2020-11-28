@@ -3,7 +3,7 @@
 @section('content')
 <section class="section">
     <div class="section-header">
-        <h1>Work Orders</h1>
+        <h1>Safety Patrols</h1>
     </div>
 
     <div class="section-body">
@@ -12,9 +12,9 @@
                 class="needs-validation" novalidate="">
                 @csrf
                 <div class="card-header">
-                    <h4>Add Work Order</h4>
+                    <h4>Add Safety Patrol</h4>
                     <div class="card-header-action">
-                        <a href="{{ route('safety-patrol.index') }}" class="btn btn-info">List Work Orders</a>
+                        <a href="{{ route('safety-patrol.index') }}" class="btn btn-info">List Safety Patrols</a>
                     </div>
                 </div>
                 <div class="card-body">

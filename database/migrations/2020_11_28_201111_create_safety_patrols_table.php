@@ -23,7 +23,7 @@ class CreateSafetyPatrolsTable extends Migration
             $table->string('pic_name');
             $table->string('operator')->nullable();
             $table->unsignedBigInteger('status_id');
-            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('safety_category_id');
             $table->dateTime('worked_at')->nullable();
             $table->timestamps();
             $table->softDeletes();

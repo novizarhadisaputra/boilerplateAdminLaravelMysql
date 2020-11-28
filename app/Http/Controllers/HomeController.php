@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Abnormality;
 use App\Log;
 use App\Notification;
+use App\SafetyPatrol;
 use App\StatusAbnormality;
 use App\StatusWorkOrder;
 use App\User;
@@ -112,5 +113,36 @@ class HomeController extends Controller
 
         $workOrders = $workOrders->get();
         return $workOrders;
+    }
+
+    public function ajaxDataSafetyPatrol(Request $request)
+    {
+        $now = Carbon::now();
+        $safetyPatrol = SafetyPatrol::select()->whereHas('status', function (Builder $query) {
+            $query->where([['name', '<>', 'Draft']]);
+        });
+        // Filter by Status
+        if ($request->filled('status_abnormality')) {
+            $condition = $request->status_abnormality === 'Closed' ? ['name', '=', 'Closed'] : ['name', '<>', 'Closed'];
+            $status = StatusWorkOrder::where([$condition])->pluck('id');
+            $safetyPatrol = $safetyPatrol->whereIn('status_id', $status);
+        }
+
+        // Filter by Department
+        if ($request->filled('department')) {
+            $department = $request->department;
+            $safetyPatrol = $safetyPatrol->whereHas('user', function ($query) use ($department) {
+                $query->where('department_id', $department);
+            });
+        }
+
+        if ($request->filled('years')) {
+            $safetyPatrol = $safetyPatrol->whereRaw('YEAR(created_at) = ?', [$request->years]);
+        } else {
+            $safetyPatrol = $safetyPatrol->whereRaw('YEAR(created_at) <= ? AND YEAR(created_at)', [$now->year, ($now->year - 4)]);
+        }
+
+        $safetyPatrol = $safetyPatrol->get();
+        return $safetyPatrol;
     }
 }

@@ -3,7 +3,7 @@
 @section('content')
 <section class="section">
     <div class="section-header">
-        <h1>Work Orders</h1>
+        <h1>Safety Patrols</h1>
     </div>
 
     <div class="section-body">
@@ -17,11 +17,11 @@
         @endif
         <div class="card">
             <div class="card-header">
-                <h4>List Work Orders</h4>
+                <h4>List Safety Patrols</h4>
                 <div class="card-header-action">
                     <a href={{ route('safety-patrol.exports.excel') }} class="btn btn-primary"><i
                             class="far fa-file-excel"></i> Export</a>
-                    <a href={{ route('safety-patrol.create') }} class="btn btn-success">Add Work Order</a>
+                    <a href={{ route('safety-patrol.create') }} class="btn btn-success">Add Safety Patrol</a>
                 </div>
             </div>
             <div class="card-body">
@@ -88,7 +88,7 @@
                                     <a href="{{ route('safety-patrol.destroy', $item->id) }}" data-button-label="Delete"
                                         data-method="DELETE" data-csrf={{csrf_token()}} data-identity={{ $item->id }}
                                         data-toggle="modal" data-wording="Are you sure delete {{ $item->title }}"
-                                        data-title="Remove Work Order" class="btn btn-danger btn-modal">
+                                        data-title="Remove Safety Patrol" class="btn btn-danger btn-modal">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                     @endcan
@@ -100,7 +100,7 @@
                                         data-button-label="Update" data-method="POST" data-csrf={{csrf_token()}}
                                         data-identity={{ $item->id }} data-toggle="modal"
                                         data-wording="Are you sure change status to {{ $item->before_label }} {{ $item->title }}"
-                                        data-title="{{ $item->before_label }} Work Order"
+                                        data-title="{{ $item->before_label }} Safety Patrol"
                                         class="btn btn-primary btn-modal">
                                         <i class="fas fa-undo"></i>
                                     </a>
@@ -140,7 +140,7 @@
                                         </div>
                                         @endif"
                                         data-wording="Are you sure change status to {{ $item->after_label }} {{ $item->title }}"
-                                        data-title="{{ $item->after_label }} Work Order"
+                                        data-title="{{ $item->after_label }} Safety Patrol"
                                         class="btn btn-success btn-modal">
                                         <i class="fas fa-share-square"></i>
                                     </a>

@@ -52,7 +52,7 @@
                 <ul class="dropdown-menu">
                     <li class="{{ request()->is('request/work-order') || request()->is('request/work-order/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('work-order.index') }}>Work order</a></li>
                     <li class="{{ request()->is('request/abnormality') || request()->is('request/abnormality/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('abnormality.index') }}>Abnormality</a></li>
-                    <li class="{{ request()->is('request/abnormality') || request()->is('request/abnormality/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('safety-patrol.index') }}>Safety Patrol</a></li>
+                    <li class="{{ request()->is('request/safety-patrol') || request()->is('request/safety-patrol/*') ? 'active' : '' }}"><a class="nav-link" href={{ route('safety-patrol.index') }}>Safety Patrol</a></li>
                 </ul>
             </li>
             @endcan
