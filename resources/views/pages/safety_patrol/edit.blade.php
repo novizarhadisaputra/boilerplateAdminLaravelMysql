@@ -10,14 +10,14 @@
         <div class="row">
             <div class="col-lg-6 col-md-6 col-12 col-sm-12">
                 <div class="card">
-                    <form method="POST" action="{{ route('work-order.update', $workOrder->id) }}"
+                    <form method="POST" action="{{ route('safety-patrol.update', $safetyPatrol->id) }}"
                         enctype="multipart/form-data" class="needs-validation" novalidate="">
                         @csrf
                         @method('PUT')
                         <div class="card-header">
                             <h4>Edit Work Order</h4>
                             <div class="card-header-action">
-                                <a href="{{ route('work-order.index') }}" class="btn btn-info">List Work Orders</a>
+                                <a href="{{ route('safety-patrol.index') }}" class="btn btn-info">List Work Orders</a>
                             </div>
                         </div>
                         <div class="card-body">
@@ -36,14 +36,14 @@
                             </div>
                             @endif
                             <div class="form-row">
-                                @foreach ($workOrder->files as $item)
+                                @foreach ($safetyPatrol->files as $item)
                                 <div class="form-group col-md-4">
                                     <div class="form-group">
                                         <a href="{{ asset('files/'.$item->path) }}" target="_blank"
                                             class="btn btn-sm btn-secondary">File {{ strtoupper($item->ext) }}
                                             {{ $loop->iteration }}
                                         </a><a
-                                            href="{{ route('work-order.file.remove', ['id' => $workOrder->id, 'idFile' => $item->id]) }}"
+                                            href="{{ route('safety-patrol.file.remove', ['id' => $safetyPatrol->id, 'idFile' => $item->id]) }}"
                                             data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}}
                                             data-identity={{ $item->id }} data-toggle="modal"
                                             data-wording="Are you sure delete File {{ strtoupper($item->ext) .' '.$loop->iteration }}"
@@ -75,15 +75,15 @@
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <label for="title">Title</label>
-                                    <input type="text" value="{{ $workOrder->title }}" class="form-control" id="title"
+                                    <input type="text" value="{{ $safetyPatrol->title }}" class="form-control" id="title"
                                         name="title">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <label for="category_id">Category</label>
-                                    <select type="text" class="form-control custom-select" id="category_id"
-                                        name="category_id">
+                                    <select type="text" class="form-control custom-select" id="safety_category_id"
+                                        name="safety_category_id">
                                         @foreach ($categories as $item)
                                         <option value="{{$item->id}}">{{ $item->name }}</option>
                                         @endforeach
@@ -94,21 +94,21 @@
                                 <div class="form-group col-md-12">
                                     <label for="description">Description</label>
                                     <textarea type="text" class="form-control" name="description"
-                                        id="description">{{ $workOrder->description }}</textarea>
+                                        id="description">{{ $safetyPatrol->description }}</textarea>
                                 </div>
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <label for="location">Location</label>
-                                    <input type="text" value="{{ $workOrder->location }}" class="form-control"
+                                    <input type="text" value="{{ $safetyPatrol->location }}" class="form-control"
                                         id="location" name="location">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <label for="pic_name">PIC Name</label>
-                                    <input type="text" value="{{ $workOrder->pic_name }}" class="form-control"
+                                    <input type="text" value="{{ $safetyPatrol->pic_name }}" class="form-control"
                                         id="pic_name" name="pic_name">
                                 </div>
                             </div>
@@ -124,14 +124,14 @@
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-12 col-sm-12">
-                @if ($workOrder->status->name === 'On Progress' || $workOrder->status->name === 'Closed')
+                @if ($safetyPatrol->status->name === 'On Progress' || $safetyPatrol->status->name === 'Closed')
                 <div class="card form-group">
                     <div class="card-header">
                         <h4>Attachment On Progress</h4>
                     </div>
                     <div class="card-body">
                         <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate=""
-                            action="{{ route('work-order.attachment.on_progress', $workOrder->id) }}">
+                            action="{{ route('safety-patrol.attachment.on_progress', $safetyPatrol->id) }}">
                             @csrf
 
                             @if(!count($closed))
@@ -149,7 +149,7 @@
                                             class="btn btn-sm btn-secondary">File {{ strtoupper($item->ext) }}
                                             {{ $loop->iteration }}
                                         </a><a
-                                            href="{{ route('work-order.attachment.remove', ['id' => $workOrder->id, 'idAttachment' => $item->id]) }}"
+                                            href="{{ route('safety-patrol.attachment.remove', ['id' => $safetyPatrol->id, 'idAttachment' => $item->id]) }}"
                                             data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}}
                                             data-identity={{ $item->id }} data-toggle="modal"
                                             data-wording="Are you sure delete File {{ strtoupper($item->ext) .' '.$loop->iteration }}"
@@ -187,14 +187,14 @@
                     </div>
                 </div>
                 @endif
-                @if($workOrder->status->name === 'Closed')
+                @if($safetyPatrol->status->name === 'Closed')
                 <div class="card">
                     <div class="card-header">
                         <h4>Attachment Closed</h4>
                     </div>
                     <div class="card-body">
                         <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate=""
-                            action="{{ route('work-order.attachment.closed', $workOrder->id) }}">
+                            action="{{ route('safety-patrol.attachment.closed', $safetyPatrol->id) }}">
                             @csrf
 
                             @if(!count($closed))
@@ -212,7 +212,7 @@
                                             class="btn btn-sm btn-secondary">File {{ strtoupper($item->ext) }}
                                             {{ $loop->iteration }}
                                         </a><a
-                                            href="{{ route('work-order.attachment.remove', ['id' => $workOrder->id, 'idAttachment' => $item->id]) }}"
+                                            href="{{ route('safety-patrol.attachment.remove', ['id' => $safetyPatrol->id, 'idAttachment' => $item->id]) }}"
                                             data-button-label="Delete" data-method="DELETE" data-csrf={{csrf_token()}}
                                             data-identity={{ $item->id }} data-toggle="modal"
                                             data-wording="Are you sure delete File {{ strtoupper($item->ext) .' '.$loop->iteration }}"

@@ -33,6 +33,10 @@ class PermissionSeed extends Seeder
             ['name' => 'list abnormality', 'guard_name' => 'web'],
             ['name' => 'edit abnormality', 'guard_name' => 'web'],
             ['name' => 'delete abnormality', 'guard_name' => 'web'],
+            ['name' => 'create safety patrols', 'guard_name' => 'web'],
+            ['name' => 'list safety patrols', 'guard_name' => 'web'],
+            ['name' => 'edit safety patrols', 'guard_name' => 'web'],
+            ['name' => 'delete safety patrols', 'guard_name' => 'web']
         ]);
     }
 }

@@ -14,7 +14,7 @@
 <!-- JS Libraies -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>ggle.min.js"></script>
 
 <!-- Optional: include a polyfill for ES6 Promises for IE11 -->
 <script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
@@ -76,7 +76,6 @@
     $(document).on('click', '.btn-remove-file', function (e) {
         e.preventDefault();
         let btnGroup = $(this).attr('id').split('inputGroupFileAddon');
-        console.log('object',  $(`label[for="inputGroupFile${btnGroup[1]}"]`).val());
         $(`#inputGroupFile${btnGroup[1]}`).val('');
         $(`label[for="inputGroupFile${btnGroup[1]}"]`).text('Choose file');
     });
@@ -93,13 +92,27 @@
         }
         let html = `
         <div class="form-group col-md-6">
-            <div class="custom-file mb-3">
-                <input type="file" class="custom-file-input attachment" id="customFile"
-                    accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
-                <label class="custom-file-label" for="customFile">Replace file</label>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <button class="input-group-text btn-danger btn-remove-file"
+                        id="attachmentAddon${$('.file-input').length + 1}">x</button>
+                </div>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input attachment" id="attachment${$('.file-input').length + 1}"
+                    accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]"
+                    required>
+                <label class="custom-file-label" for="attachment${$('.file-input').length + 1}">Choose File</label>
+                </div>
             </div>
         </div>`;
         $('#attachments').append(html);
+    });
+
+    $(document).on('click', '.btn-remove-file', function (e) {
+        e.preventDefault();
+        let btnGroup = $(this).attr('id').split('attachmentAddon');
+        $(`#attachment${btnGroup[1]}`).val('');
+        $(`label[for="attachment${btnGroup[1]}"]`).text('Choose file');
     });
 
     $('#addAttachmentClosed').click(function (e) {
@@ -114,13 +127,24 @@
         }
         let html = `
         <div class="form-group col-md-6">
+            <div class="input-group-prepend">
+                <button class="input-group-text btn-danger btn-remove-file"
+                    id="attachmentClosedAddon">x</button>
+            </div>
             <div class="custom-file mb-3">
-                <input type="file" class="custom-file-input attachment-closed" id="customFile"
+                <input type="file" class="custom-file-input attachment-closed" id="attachmentClosed"
                     accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
-                <label class="custom-file-label" for="customFile">Replace file</label>
+                <label class="custom-file-label" for="attachmentClosed">Choose File</label>
             </div>
         </div>`;
         $('#attachmentsClosed').append(html);
+    });
+
+    $(document).on('click', '.btn-remove-file', function (e) {
+        e.preventDefault();
+        let btnGroup = $(this).attr('id').split('attachmentClosedAddon');
+        $(`#attachmentClosed${btnGroup[1]}`).val('');
+        $(`label[for="attachmentClosed${btnGroup[1]}"]`).text('Choose file');
     });
 
     $('select[name="department_id"]').change(function (e) {
@@ -156,6 +180,15 @@
     $(document).on('change', '.custom-file-input', function () {
         let fileName = $(this).val().split("\\").pop();
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    $(document).on('change', 'input[name=isFeedback]', function () {
+        let inputFeedback = document.getElementById('input-feedback');
+        if(inputFeedback.style.display === 'none'){
+            inputFeedback.style.display = '';
+        } else {
+            inputFeedback.style.display = 'none';
+        }
     });
 
     async function showSections(department_id = null) {

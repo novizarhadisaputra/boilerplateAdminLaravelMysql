@@ -152,11 +152,17 @@
                             @if(!count($closed))
                             <div class="form-row" id="attachments">
                                 <div class="form-group col-md-6">
-                                    <div class="custom-file mb-3">
-                                        <input type="file" class="custom-file-input attachment" id="customFile"
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <button class="input-group-text btn-danger btn-remove-file"
+                                                id="attachmentAddon">x</button>
+                                        </div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input attachment" id="attachment"
                                             accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]"
                                             required>
-                                        <label class="custom-file-label" for="customFile">Choose File</label>
+                                        <label class="custom-file-label" for="attachment">Choose File</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -210,10 +216,14 @@
                             @if(!count($closed))
                             <div class="form-row" id="attachmentsClosed">
                                 <div class="form-group col-md-6">
+                                    <div class="input-group-prepend">
+                                        <button class="input-group-text btn-danger btn-remove-file"
+                                            id="attachmentClosedAddon">x</button>
+                                    </div>
                                     <div class="custom-file mb-3">
-                                        <input type="file" class="custom-file-input attachment-closed" id="customFile"
+                                        <input type="file" class="custom-file-input attachment-closed" id="attachmentClosed"
                                             accept="application/pdf, image/jpeg, image/jpg, image/png" name="files[]">
-                                        <label class="custom-file-label" for="customFile">Choose File</label>
+                                        <label class="custom-file-label" for="attachmentClosed">Choose File</label>
                                     </div>
                                 </div>
                             </div>

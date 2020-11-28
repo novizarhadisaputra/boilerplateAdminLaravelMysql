@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,7 +32,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('status-abnormality', 'StatusAbnormalityController');
     });
 
-    Route::group(['prefix' => 'management',  'middleware' => ['role:super admin']], function () {
+    Route::group(['prefix' => 'management', 'middleware' => ['role:super admin']], function () {
         Route::resource('users', 'UserController');
         // Route::get('users/{id}/profile', 'UserController@profile')->name('users.profile');
         Route::resource('roles-and-permissions', 'RolePermissionController');
@@ -41,9 +40,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'request'], function () {
         Route::resource('work-order', 'WorkOrderController');
-        Route::get('work-order/ajax/data','HomeController@ajaxDataWorkOrder')->name('work-order.ajax.data');
+        Route::get('work-order/ajax/data', 'HomeController@ajaxDataWorkOrder')->name('work-order.ajax.data');
         Route::resource('abnormality', 'AbnormalityController');
-        Route::get('abnormality/ajax/data','HomeController@ajaxDataAbnormality')->name('abnormality.ajax.data');
+        Route::get('abnormality/ajax/data', 'HomeController@ajaxDataAbnormality')->name('abnormality.ajax.data');
+        Route::resource('safety-patrol', 'WorkOrderController');
+        Route::get('safety-patrol/ajax/data', 'HomeController@ajaxDataWorkOrder')->name('safety-patrol.ajax.data');
+
         Route::get('abnormality/exports/excel', 'AbnormalityController@export')->name('abnormality.exports.excel')->middleware('role:super admin|admin');
         Route::post('abnormality/status/draft/{id}', 'AbnormalityController@draft')->name('abnormality.status.draft');
         Route::post('abnormality/status/open/{id}', 'AbnormalityController@open')->name('abnormality.status.open');
@@ -68,6 +70,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('work-order/file/{id}/{idFile}/remove', 'WorkOrderController@removeFile')->name('work-order.file.remove');
         Route::delete('work-order/attachment/{id}/{idAttachment}/remove', 'WorkOrderController@removeAttachment')->name('work-order.attachment.remove');
 
+        Route::get('safety-patrol/exports/excel', 'SafetyPatrolController@export')->name('safety-patrol.exports.excel')->middleware('role:super admin|admin');
+        Route::post('safety-patrol/status/draft/{id}', 'SafetyPatrolController@draft')->name('safety-patrol.status.draft');
+        Route::post('safety-patrol/status/open/{id}', 'SafetyPatrolController@open')->name('safety-patrol.status.open');
+        Route::post('safety-patrol/status/approved/{id}', 'SafetyPatrolController@approved')->name('safety-patrol.status.approved');
+        Route::post('safety-patrol/status/on_progress/{id}', 'SafetyPatrolController@on_progress')->name('safety-patrol.status.on_progress');
+        Route::post('safety-patrol/status/on_progress/{id}/attachment', 'SafetyPatrolController@attachmentProgress')->name('safety-patrol.attachment.on_progress');
+        Route::post('safety-patrol/status/closed/{id}', 'SafetyPatrolController@closed')->name('safety-patrol.status.closed');
+        Route::post('safety-patrol/status/closed/{id}/attachment', 'SafetyPatrolController@attachmentClosed')->name('safety-patrol.attachment.closed');
+
+        Route::delete('safety-patrol/file/{id}/{idFile}/remove', 'SafetyPatrolController@removeFile')->name('safety-patrol.file.remove');
+        Route::delete('safety-patrol/attachment/{id}/{idAttachment}/remove', 'SafetyPatrolController@removeAttachment')->name('safety-patrol.attachment.remove');
     });
 });
 

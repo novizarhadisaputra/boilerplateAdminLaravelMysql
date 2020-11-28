@@ -19,14 +19,14 @@
             <div class="card-header">
                 <h4>List Work Orders</h4>
                 <div class="card-header-action">
-                    <a href={{ route('work-order.exports.excel') }} class="btn btn-primary"><i
+                    <a href={{ route('safety-patrol.exports.excel') }} class="btn btn-primary"><i
                             class="far fa-file-excel"></i> Export</a>
-                    <a href={{ route('work-order.create') }} class="btn btn-success">Add Work Order</a>
+                    <a href={{ route('safety-patrol.create') }} class="btn btn-success">Add Work Order</a>
                 </div>
             </div>
             <div class="card-body">
                 <div class="float-right form-group">
-                    <form action="{{ route('work-order.index') }}">
+                    <form action="{{ route('safety-patrol.index') }}">
                         <div class="input-group">
                             <input type="text" class="form-control" name="search" placeholder="Search">
                             <div class="input-group-append">
@@ -51,10 +51,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($workOrders as $item)
+                            @forelse ($safetyPatrols as $item)
                             <tr>
                                 <td>
-                                    {{($workOrders->currentPage() - 1) * $workOrders->perPage() + $loop->iteration}}
+                                    {{($safetyPatrols->currentPage() - 1) * $safetyPatrols->perPage() + $loop->iteration}}
                                 </td>
                                 {{-- <td> {{ $item->user->name }} </td> --}}
                                 <td> {{ $item->code }} </td>
@@ -62,21 +62,21 @@
                                 <td><a class="btn btn-sm btn-primary" href="#">{{ $item->status->name }}</a></td>
                                 <td> {{ $item->created_at }} </td>
                                 <td>
-                                    <a href={{ route('work-order.show', $item->id) }} class="btn btn-info"
+                                    <a href={{ route('safety-patrol.show', $item->id) }} class="btn btn-info"
                                         data-toggle="tooltip" title="" data-original-title="Detail">
                                         <i class="fas fa-info"></i>
                                     </a>
                                     @if (auth()->user()->hasRole(['super admin', 'admin']))
-                                    @can('edit work orders')
-                                    <a href={{ route('work-order.edit', $item->id) }} class="btn btn-warning"
+                                    @can('edit safety patrols')
+                                    <a href={{ route('safety-patrol.edit', $item->id) }} class="btn btn-warning"
                                         data-toggle="tooltip" title="" data-original-title="Edit">
                                         <i class="fas fa-pen-alt"></i>
                                     </a>
                                     @endcan
                                     @else
                                     @if ($item->status->name == 'Draft')
-                                    @can('edit work orders')
-                                    <a href={{ route('work-order.edit', $item->id) }} class="btn btn-warning"
+                                    @can('edit safety patrols')
+                                    <a href={{ route('safety-patrol.edit', $item->id) }} class="btn btn-warning"
                                         data-toggle="tooltip" title="" data-original-title="Edit">
                                         <i class="fas fa-pen-alt"></i>
                                     </a>
@@ -84,8 +84,8 @@
                                     @endif
                                     @endif
 
-                                    @can('delete work orders')
-                                    <a href="{{ route('work-order.destroy', $item->id) }}" data-button-label="Delete"
+                                    @can('delete safety patrols')
+                                    <a href="{{ route('safety-patrol.destroy', $item->id) }}" data-button-label="Delete"
                                         data-method="DELETE" data-csrf={{csrf_token()}} data-identity={{ $item->id }}
                                         data-toggle="modal" data-wording="Are you sure delete {{ $item->title }}"
                                         data-title="Remove Work Order" class="btn btn-danger btn-modal">
@@ -96,7 +96,7 @@
                                 <td>
                                     @if (auth()->user()->hasRole(['super admin', 'admin']) && $item->status_before != '' && $item->status_before != null && $item->status->name != 'Closed')
 
-                                    <a href="{{ route('work-order.status.'. $item->status_before, $item->id) }}"
+                                    <a href="{{ route('safety-patrol.status.'. $item->status_before, $item->id) }}"
                                         data-button-label="Update" data-method="POST" data-csrf={{csrf_token()}}
                                         data-identity={{ $item->id }} data-toggle="modal"
                                         data-wording="Are you sure change status to {{ $item->before_label }} {{ $item->title }}"
@@ -107,7 +107,7 @@
                                     @endif
 
                                     @if ($item->status_after != '' && $item->status_after != null)
-                                    <a href="{{ route('work-order.status.'. $item->status_after, $item->id) }}"
+                                    <a href="{{ route('safety-patrol.status.'. $item->status_after, $item->id) }}"
                                         data-button-label="Update" data-method="POST" data-csrf={{csrf_token()}}
                                         data-identity={{ $item->id }} data-toggle="modal" data-content-html="@if (!auth()->user()->hasRole(['user']) && $item->status_after == 'approved')
                                         <div class='form-row'>
@@ -159,7 +159,7 @@
                 </div>
                 {{-- Pagination --}}
                 <div class="d-flex justify-content-center">
-                    {!! $workOrders->links() !!}
+                    {!! $safetyPatrols->links() !!}
                 </div>
             </div>
         </div>

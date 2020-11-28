@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DepartmentSeeder::class);
         $this->call(SectionSeeder::class);
         $this->call(CategorySeeder::class);
+        $this->call(SafetyPatrolCategorySeeder::class);
         $this->call(PermissionSeed::class);
         $this->call(StatusWorkOrderSeed::class);
         $this->call(StatusAbnormalitySeed::class);
