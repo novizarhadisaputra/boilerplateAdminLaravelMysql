@@ -143,6 +143,28 @@
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-12 col-sm-12">
+                @if (count($workOrder->reviews))
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Feedback</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled list-unstyled-border">
+                            @foreach ($workOrder->reviews as $item)
+                            <li class="media">
+                                {{-- <img class="mr-3 rounded-circle" src="{{ asset('assets/img/avatar/avatar-1.png') }}"
+                                    alt="avatar" width="50"> --}}
+                                <div class="media-body">
+                                    <div class="float-right text-primary">{{ $item->created_at }}</div>
+                                    <div class="media-title">{{ $item->user->name }}</div>
+                                    <span class="text-small text-muted">{{ $item->message }}</span>
+                                </div>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+                @endif
                 <div class="card">
                     <div class="card-header">
                         <h4>Recent Activities</h4>

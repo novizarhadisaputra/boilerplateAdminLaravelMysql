@@ -32,7 +32,7 @@ class RoleSeeder extends Seeder
             'guard_name' => 'web'
         ]);
         $userPermissions = collect($allPermissions)->filter(function ($value, $key) {
-            return strpos($value, 'abnormality') !== false || strpos($value, 'work orders') !== false || strpos($value, 'request menu') !== false;
+            return strpos($value, 'safety patrols') !== false || strpos($value, 'abnormality') !== false || strpos($value, 'work orders') !== false || strpos($value, 'request menu') !== false;
         });
         $user->syncPermissions($userPermissions);
 

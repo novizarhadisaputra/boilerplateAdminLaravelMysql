@@ -10,7 +10,7 @@ class SafetyPatrol extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['code', 'title', 'description', 'location', 'pic_name', 'user_id', 'status_id', 'safety_category_id', 'operator', 'worked_at'];
+    protected $fillable = ['code', 'title', 'description', 'location', 'potential', 'pic_name', 'user_id', 'status_id', 'safety_category_id', 'operator', 'worked_at'];
     protected $dates = [
         'created_at',
         'updated_at',
@@ -61,7 +61,10 @@ class SafetyPatrol extends Model
 
     public function getWorkedAtAttribute($value)
     {
-        if($value !== null) return Carbon::parse($value)->format('d M Y');
+        if ($value !== null) {
+            return Carbon::parse($value)->format('d M Y');
+        }
+
     }
 
     public function getStatusBeforeAttribute($value)

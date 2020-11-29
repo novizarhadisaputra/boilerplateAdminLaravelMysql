@@ -186,8 +186,18 @@
         let inputFeedback = document.getElementById('input-feedback');
         if(inputFeedback.style.display === 'none'){
             inputFeedback.style.display = '';
+            inputFeedback.value = true;
         } else {
             inputFeedback.style.display = 'none';
+            inputFeedback.value = false;
+        }
+    });
+
+    $(document).on('change', 'input[name=isRollback]', function () {
+        if($(this).val() === ''){
+            $(this).val(true);
+        } else {
+            $(this).val('');
         }
     });
 

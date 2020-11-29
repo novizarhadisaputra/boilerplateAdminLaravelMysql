@@ -97,7 +97,12 @@
                                         id="description">{{ $safetyPatrol->description }}</textarea>
                                 </div>
                             </div>
-
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label for="potential">Potential hazard</label>
+                                    <textarea type="text" class="form-control" name="potential" id="potential"></textarea>
+                                </div>
+                            </div>
                             <div class="form-row">
                                 <div class="form-group col-md-12">
                                     <label for="location">Location</label>

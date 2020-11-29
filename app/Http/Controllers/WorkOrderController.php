@@ -358,10 +358,15 @@ class WorkOrderController extends Controller
         if (!auth()->user()->hasRole(['super admin', 'admin'])) {
             return abort(403);
         }
-
+        if ($request->filled('feedback')) {
+            $workOrder->reviews()->create(['message' => $request->feedback, 'user_id' => auth()->user()->id]);
+        }
         $workOrder->status_id = $status->id;
         $workOrder->save();
 
+        if ($request->filled('isRollback')) {
+            return $this->on_progress($request, $id);
+        }
         event(new ModelWasUpdated($workOrder, 'The request work order change status to ' . $status->name));
         $workOrder->url = route('work-order.update', $workOrder->id);
         event(new SubmitRequestMail($workOrder, 'The request work order change status to ' . $status->name));

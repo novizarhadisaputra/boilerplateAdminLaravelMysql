@@ -125,7 +125,7 @@
                                         @elseif(!auth()->user()->hasRole(['user']) && $item->status_after == 'closed')
                                         <div class='form-row'>
                                             <div class='form-group'>
-                                                <div class='control-label'>Are you have a feedback</div>
+                                                <div class='control-label'>Are you have a feedback ?</div>
                                                 <label class='custom-switch mt-2 pl-0'>
                                                     <input type='checkbox' name='isFeedback' class='custom-switch-input'>
                                                     <span class='custom-switch-indicator'></span>
@@ -135,8 +135,17 @@
                                         <div class='form-row' id='input-feedback' style='display:none;'>
                                             <div class='form-group col-md-12'>
                                                 <label for='feedback'>Feedback</label>
-                                                <input type='text' class='form-control' id='feedback' name='feedback'>
+                                                <textarea type='text' class='form-control' id='feedback' name='feedback'></textarea>
                                             </div>
+                                        </div>
+                                        <div class='form-row'>
+                                            <div class='form-group'>
+                                                <div class='control-label'>Are you want rollack ?</div>
+                                                <label class='custom-switch mt-2 pl-0'>
+                                                    <input type='checkbox' name='isRollback' class='custom-switch-input' value=''>
+                                                    <span class='custom-switch-indicator'></span>
+                                                </label>
+                                              </div>
                                         </div>
                                         @endif"
                                         data-wording="Are you sure change status to {{ $item->after_label }} {{ $item->title }}"
