@@ -52,6 +52,20 @@
                         </thead>
                         <tbody>
                             @forelse ($safetyPatrols as $item)
+
+                            @php
+                                if($item->status->name === 'Draft') {
+                                    $color = "btn-info";
+                                } else if($item->status->name === 'Open') {
+                                    $color = "btn-info";
+                                } else if($item->status->name === 'Approved') {
+                                    $color = "btn-info";
+                                } else if($item->status->name === 'On Progress') {
+                                    $color = "btn-warning";
+                                } else if($item->status->name === 'Closed') {
+                                    $color = "btn-success";
+                                }
+                            @endphp
                             <tr>
                                 <td>
                                     {{($safetyPatrols->currentPage() - 1) * $safetyPatrols->perPage() + $loop->iteration}}
@@ -59,7 +73,7 @@
                                 {{-- <td> {{ $item->user->name }} </td> --}}
                                 <td> {{ $item->code }} </td>
                                 <td> {{ $item->title }} </td>
-                                <td><a class="btn btn-sm btn-primary" href="#">{{ $item->status->name }}</a></td>
+                                <td><a class="btn btn-sm {{ $color }}" href="#">{{ $item->status->name }}</a></td>
                                 <td> {{ $item->created_at }} </td>
                                 <td>
                                     <a href={{ route('safety-patrol.show', $item->id) }} class="btn btn-info"

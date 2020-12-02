@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Mail\RequestMail;
 use App\Notification;
+use App\Setting;
 use App\User;
 use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Role;
@@ -36,7 +37,8 @@ class SendRequestMail
                 $emails->merge($emails);
             }
         }
-        Mail::to($emails)->send(new RequestMail($event->data));
+        $setting = Setting::first();
+        if($setting->admin_email_notification) Mail::to($emails)->send(new RequestMail($event->data));
         Notification::create(['action' => $event->message, 'url' => $event->data->url]);
     }
 }

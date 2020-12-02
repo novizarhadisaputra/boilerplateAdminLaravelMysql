@@ -15,6 +15,7 @@ class PermissionSeed extends Seeder
             ['name' => 'master data menu', 'guard_name' => 'web'],
             ['name' => 'management menu', 'guard_name' => 'web'],
             ['name' => 'request menu', 'guard_name' => 'web'],
+            ['name' => 'setting menu', 'guard_name' => 'web'],
             ['name' => 'users menu', 'guard_name' => 'web'],
             ['name' => 'roles and permissions', 'guard_name' => 'web'],
             ['name' => 'create users', 'guard_name' => 'web'],

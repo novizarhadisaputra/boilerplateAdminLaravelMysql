@@ -25,7 +25,7 @@ class RoleSeeder extends Seeder
             'name' => 'admin',
             'guard_name' => 'web'
         ]);
-        $admin->syncPermissions($allPermissions);
+        $admin->syncPermissions(collect($allPermissions)->except(['setting menu']));
 
         $user = Role::create([
             'name' => 'user',

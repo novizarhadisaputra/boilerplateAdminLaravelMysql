@@ -15,8 +15,9 @@ class CreateSettingsTable extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->boolean('admin_email_notification')->default(true);
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

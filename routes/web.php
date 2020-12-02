@@ -83,6 +83,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('safety-patrol/file/{id}/{idFile}/remove', 'SafetyPatrolController@removeFile')->name('safety-patrol.file.remove');
         Route::delete('safety-patrol/attachment/{id}/{idAttachment}/remove', 'SafetyPatrolController@removeAttachment')->name('safety-patrol.attachment.remove');
     });
+
+    Route::group(['middleware' => ['role:super admin']], function () {
+        Route::resource('setting', 'SettingController');
+    });
 });
 
 Route::get('sections', 'SectionController@findAll')->name('sections.find');

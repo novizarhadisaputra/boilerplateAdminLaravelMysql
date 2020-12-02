@@ -58,7 +58,11 @@
             </li>
             @endcan
 
-
+            @can('setting menu')
+            <li class="nav-item {{ request()->is('setting/*') ? 'active' : '' }}">
+                <a href="{{ route('setting.index') }}" class="nav-link"><i class="fas fa-cog"></i> <span>Setting</span></a>
+            </li>
+            @endcan
 
         </ul>
     </aside>
